@@ -99,7 +99,7 @@ func SignIn(c *gin.Context, client *ent.Client) {
 	ctx := c.Request.Context()
 	lowerEmail := auth.NormarlizeEmail(req.Email)
 
-	user, err := client.Users.Query().Where(users.EmailEQ(lowerEmail)).Select(users.FieldPasswordHash).First(ctx)
+	user, err := client.Users.Query().Where(users.EmailEQ(lowerEmail)).Select(users.FieldPasswordHash, users.FieldUlid).First(ctx)
 	if err != nil && ent.IsNotFound(err) {
 		respondWithError(c, http.StatusUnauthorized, "Invalid credentials")
 		return
@@ -126,8 +126,8 @@ func respondWithTokens(c *gin.Context, id string) {
 	token, _ := auth.GenerateJWT(id)
 	refreshToken := "refresh_token"
 
-	c.JSON(200, gin.H{
-		"token":         token,
-		"refresh_token": refreshToken,
+	c.JSON(200, AuthResponse{
+		Token:        token,
+		RefreshToken: refreshToken,
 	})
 }

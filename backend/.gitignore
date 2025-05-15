@@ -2,3 +2,4 @@ ent/*
 !ent/schema
 .env
 **.pem
+/tmp

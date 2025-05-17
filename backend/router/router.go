@@ -32,6 +32,15 @@ func SetupRouter(client *ent.Client) *gin.Engine {
 	authorized.Use(middleware.AuthRequired())
 	{
 		authorized.GET("/i", handler.I)
+		authorized.GET("/posts", func(c *gin.Context) {
+			handler.GetPost(c, client)
+		})
+		authorized.POST("/posts", func(c *gin.Context) {
+			handler.CreatePost(c, client)
+		})
+		authorized.DELETE("/posts/:id", func(c *gin.Context) {
+			handler.DeletePost(c, client)
+		})
 	}
 
 	router.GET("/test", func(c *gin.Context) {

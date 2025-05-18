@@ -41,6 +41,12 @@ func SetupRouter(client *ent.Client) *gin.Engine {
 		authorized.DELETE("/posts/:id", func(c *gin.Context) {
 			handler.DeletePost(c, client)
 		})
+		authorized.GET("/tags", func(c *gin.Context) {
+			handler.GetTags(c, client)
+		})
+		authorized.GET("/tags/:tag/posts", func(c *gin.Context) {
+			handler.GetPostsByTag(c, client)
+		})
 	}
 
 	router.GET("/test", func(c *gin.Context) {

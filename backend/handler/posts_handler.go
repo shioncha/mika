@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/shioncha/mika/backend/ent"
 	"github.com/shioncha/mika/backend/ent/posts"
+	"github.com/shioncha/mika/backend/ent/tags"
 	"github.com/shioncha/mika/backend/ent/users"
 	"github.com/shioncha/mika/backend/internal/utils"
 )
@@ -32,8 +34,8 @@ func GetPost(c *gin.Context, client *ent.Client) {
 	}
 	ctx := c.Request.Context()
 
-	user, err := getUserByUlid(c, client, uidStr)
-	if err != nil && ent.IsNotFound(err) {
+	userID, err := getUserIdByUlid(ctx, client, uidStr)
+	if err != nil && err.Error() == "unauthorized" {
 		respondWithError(c, http.StatusUnauthorized, "Invalid credentials")
 		return
 	}
@@ -42,7 +44,7 @@ func GetPost(c *gin.Context, client *ent.Client) {
 		return
 	}
 
-	postList, err := client.Posts.Query().Where(posts.UserIDEQ(user.ID)).All(ctx)
+	postList, err := client.Posts.Query().Where(posts.UserIDEQ(userID)).All(ctx)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
@@ -76,7 +78,7 @@ func CreatePost(c *gin.Context, client *ent.Client) {
 	ctx := c.Request.Context()
 	id := utils.GenerateULID()
 
-	user, err := getUserByUlid(c, client, uidStr)
+	userID, err := getUserIdByUlid(ctx, client, uidStr)
 	if err != nil && err.Error() == "unauthorized" {
 		respondWithError(c, http.StatusUnauthorized, "Invalid credentials")
 		return
@@ -86,14 +88,63 @@ func CreatePost(c *gin.Context, client *ent.Client) {
 		return
 	}
 
-	_, err = client.Posts.
+	tagList, err := getTags(req.Content)
+	if err != nil {
+		respondWithError(c, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	tx, err := client.Tx(ctx)
+	if err != nil {
+		respondWithError(c, http.StatusInternalServerError, "Failed to start transaction")
+		return
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	var tagIDs []int
+
+	for _, tag := range tagList {
+		existingTag, err := tx.Tags.Query().Where(tags.UserIDEQ(userID), tags.TagEQ(tag)).First(ctx)
+		if err != nil && !ent.IsNotFound(err) {
+			tx.Rollback()
+			respondWithError(c, http.StatusInternalServerError, "Failed to check tag existence")
+			return
+		}
+		if existingTag != nil {
+			tagIDs = append(tagIDs, existingTag.ID)
+			continue
+		}
+
+		tagUlid := utils.GenerateULID()
+		res, err := tx.Tags.Create().SetTag(tag).SetUserID(userID).SetUlid(tagUlid).Save(ctx)
+		if err != nil {
+			tx.Rollback()
+			respondWithError(c, http.StatusInternalServerError, "Failed to create tag")
+			return
+		}
+		tagIDs = append(tagIDs, res.ID)
+	}
+
+	_, err = tx.Posts.
 		Create().
 		SetUlid(id).
-		SetUserID(user.ID).
+		SetUserID(userID).
 		SetContent(req.Content).
+		AddTagIDs(tagIDs...).
 		Save(ctx)
 	if err != nil {
+		tx.Rollback()
 		respondWithError(c, http.StatusInternalServerError, "Failed to create post")
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
 
@@ -111,8 +162,8 @@ func DeletePost(c *gin.Context, client *ent.Client) {
 	}
 	ctx := c.Request.Context()
 
-	user, err := getUserByUlid(c, client, uidStr)
-	if err != nil && ent.IsNotFound(err) {
+	userID, err := getUserIdByUlid(ctx, client, uidStr)
+	if err != nil && err.Error() == "unauthorized" {
 		respondWithError(c, http.StatusUnauthorized, "Invalid credentials")
 		return
 	}
@@ -121,22 +172,34 @@ func DeletePost(c *gin.Context, client *ent.Client) {
 		return
 	}
 
-	res, err := client.Posts.Delete().Where(posts.UserIDEQ(user.ID), posts.UlidEQ(id)).Exec(ctx)
+	_, err = client.Posts.Delete().Where(posts.UserIDEQ(userID), posts.UlidEQ(id)).Exec(ctx)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
-	fmt.Println(res)
 	c.JSON(http.StatusOK, gin.H{"message": "successful"})
 }
 
-func getUserByUlid(ctx context.Context, client *ent.Client, uidStr string) (*ent.Users, error) {
+func getUserIdByUlid(ctx context.Context, client *ent.Client, uidStr string) (int, error) {
 	user, err := client.Users.Query().Where(users.UlidEQ(uidStr)).Select(users.FieldID).First(ctx)
 	if err != nil && ent.IsNotFound(err) {
-		return nil, fmt.Errorf("unauthorized")
+		return 0, fmt.Errorf("unauthorized")
 	}
 	if err != nil {
-		return nil, fmt.Errorf("Internal server error")
+		return 0, fmt.Errorf("Internal server error")
 	}
-	return user, nil
+	return user.ID, nil
+}
+
+func getTags(content string) ([]string, error) {
+	r, err := regexp.Compile(`#\S+`)
+	if err != nil {
+		return nil, err
+	}
+	matches := r.FindAllString(content, -1)
+	var tags []string
+	for _, match := range matches {
+		tags = append(tags, match[1:])
+	}
+	return tags, nil
 }

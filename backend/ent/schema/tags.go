@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -32,5 +33,7 @@ func (Tags) Fields() []ent.Field {
 
 // Edges of the Tags.
 func (Tags) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("posts", Posts.Type).Ref("tags"),
+	}
 }

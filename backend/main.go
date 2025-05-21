@@ -24,6 +24,10 @@ func main() {
 	postService := service.NewPostService(client, postRepo)
 	postHandler := handler.NewPostHandler(postService)
 
-	router := router.SetupRouter(authHandler, postHandler, client)
+	tagRepo := entrepogitory.NewTagRepository(client)
+	tagService := service.NewTagService(tagRepo)
+	tagHandler := handler.NewTagHandler(tagService)
+
+	router := router.SetupRouter(authHandler, postHandler, tagHandler, client)
 	router.Run(":8080")
 }

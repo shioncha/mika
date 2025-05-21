@@ -9,7 +9,7 @@ import (
 	"github.com/shioncha/mika/backend/middleware"
 )
 
-func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, client *ent.Client) *gin.Engine {
+func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, th *handler.TagHandler, client *ent.Client) *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/", func(c *gin.Context) {
@@ -31,12 +31,8 @@ func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, client *ent.C
 		authorized.GET("/posts", ph.GetPosts)
 		authorized.POST("/posts", ph.CreatePost)
 		authorized.DELETE("/posts/:id", ph.DeletePost)
-		authorized.GET("/tags", func(c *gin.Context) {
-			handler.GetTags(c, client)
-		})
-		authorized.GET("/tags/:tag/posts", func(c *gin.Context) {
-			handler.GetPostsByTag(c, client)
-		})
+		authorized.GET("/tags", th.GetTags)
+		authorized.GET("/tags/:tag/posts", th.GetPostsByTag)
 	}
 
 	router.GET("/test", func(c *gin.Context) {

@@ -28,6 +28,6 @@ func main() {
 	tagService := service.NewTagService(tagRepo)
 	tagHandler := handler.NewTagHandler(tagService)
 
-	router := router.SetupRouter(authHandler, postHandler, tagHandler, client)
+	router := router.SetupRouter(authHandler, postHandler, tagHandler)
 	router.Run(":8080")
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/shioncha/mika/backend/middleware"
 )
 
-func SetupRouter(client *ent.Client) *gin.Engine {
+func SetupRouter(ah *handler.AuthHandler, client *ent.Client) *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/", func(c *gin.Context) {
@@ -18,13 +18,9 @@ func SetupRouter(client *ent.Client) *gin.Engine {
 		})
 	})
 
-	router.POST("/sign-up", func(c *gin.Context) {
-		handler.SignUp(c, client)
-	})
+	router.POST("/sign-up", ah.SignUp)
 
-	router.POST("/sign-in", func(c *gin.Context) {
-		handler.SignIn(c, client)
-	})
+	router.POST("/sign-in", ah.SignIn)
 
 	router.POST("sign-out")
 

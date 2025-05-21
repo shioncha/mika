@@ -1,16 +1,17 @@
 package utils
 
 import (
-	"fmt"
 	"regexp"
 )
 
 func ExtractHashtags(content string) ([]string, error) {
-	re := regexp.MustCompile(`#\S+`)
-	matches := re.FindAllString(content, -1)
-
+	r, err := regexp.Compile(`#\S+`)
+	if err != nil {
+		return nil, err
+	}
+	matches := r.FindAllString(content, -1)
 	if matches == nil {
-		return nil, fmt.Errorf("no hashtags found")
+		return nil, nil
 	}
 
 	hashtagMap := make(map[string]struct{})
@@ -20,7 +21,7 @@ func ExtractHashtags(content string) ([]string, error) {
 
 	var hashtags []string
 	for hashtag := range hashtagMap {
-		hashtags = append(hashtags, hashtag)
+		hashtags = append(hashtags, hashtag[1:])
 	}
 
 	return hashtags, nil

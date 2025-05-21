@@ -20,6 +20,10 @@ func main() {
 	authService := service.NewAuthService(userRepo)
 	authHandler := handler.NewAuthHandler(authService)
 
-	router := router.SetupRouter(authHandler, client)
+	postRepo := entrepogitory.NewPostRepository(client)
+	postService := service.NewPostService(client, postRepo)
+	postHandler := handler.NewPostHandler(postService)
+
+	router := router.SetupRouter(authHandler, postHandler, client)
 	router.Run(":8080")
 }

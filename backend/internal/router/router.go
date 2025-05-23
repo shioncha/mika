@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/shioncha/mika/backend/handler"
-	"github.com/shioncha/mika/backend/middleware"
+	"github.com/shioncha/mika/backend/internal/handler"
+	"github.com/shioncha/mika/backend/internal/middleware"
 )
 
 func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, th *handler.TagHandler) *gin.Engine {

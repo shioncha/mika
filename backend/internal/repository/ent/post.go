@@ -57,9 +57,9 @@ func (r *PostRepository) GetPostByPostID(ctx context.Context, userID int, postID
 	}, nil
 }
 
-func (r *PostRepository) CreatePost(ctx context.Context, userID int, content string, tags []int) error {
+func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID int, content string, tags []int) error {
 	id := utils.GenerateULID()
-	_, err := r.client.Posts.Create().
+	_, err := tx.Posts.Create().
 		SetUlid(id).
 		SetUserID(userID).
 		SetContent(content).

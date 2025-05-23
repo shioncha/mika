@@ -21,7 +21,7 @@ type PostRepository interface {
 	GetPostByPostID(ctx context.Context, userID int, postID string) (*Post, error)
 
 	// 投稿を作成
-	CreatePost(ctx context.Context, userID int, post string, tags []int) error
+	CreatePost(ctx context.Context, tx *ent.Tx, userID int, post string, tags []int) error
 
 	// 投稿を削除
 	DeletePost(ctx context.Context, userID int, postID string) error

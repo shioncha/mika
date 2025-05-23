@@ -74,7 +74,7 @@ func (s *PostService) CreatePost(ctx context.Context, userUlid string, content s
 		return err
 	}
 
-	err = s.postRepo.CreatePost(ctx, userID, content, tagIDs)
+	err = s.postRepo.CreatePost(ctx, tx, userID, content, tagIDs)
 	if err != nil {
 		tx.Rollback()
 		return err

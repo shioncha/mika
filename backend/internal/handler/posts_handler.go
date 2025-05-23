@@ -34,6 +34,25 @@ func (h *PostHandler) GetPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+func (h *PostHandler) GetPost(c *gin.Context) {
+	id := c.Param("id")
+
+	uid, _ := c.Get("user_id")
+	uidStr, ok := uid.(string)
+	if !ok {
+		respondWithError(c, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	res, err := h.postService.GetPost(c.Request.Context(), uidStr, id)
+	if err != nil {
+		respondWithError(c, http.StatusInternalServerError, "Internal server error")
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
 type CreatePostRequest struct {
 	Content string `json:"content" binding:"required"`
 }

@@ -20,6 +20,7 @@ func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, th *handler.T
 
 		authorized.GET("/posts", ph.GetPosts)
 		authorized.POST("/posts", ph.CreatePost)
+		authorized.GET("/posts/:id", ph.GetPost)
 		authorized.DELETE("/posts/:id", ph.DeletePost)
 
 		authorized.GET("/tags", th.GetTags)

@@ -16,7 +16,7 @@ func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, th *handler.T
 	authorized := router.Group("/")
 	authorized.Use(middleware.AuthRequired())
 	{
-		authorized.GET("/i", handler.I)
+		authorized.GET("/users/me", ah.Get)
 
 		authorized.GET("/posts", ph.GetPosts)
 		authorized.POST("/posts", ph.CreatePost)

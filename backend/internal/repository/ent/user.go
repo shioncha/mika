@@ -47,6 +47,23 @@ func (r *UserRepository) EmailExists(ctx context.Context, email string) (bool, e
 	return isExist, nil
 }
 
+func (r *UserRepository) GetByUlid(ctx context.Context, id string) (*repository.User, error) {
+	user, err := r.client.Users.Query().Where(users.UlidEQ(id)).First(ctx)
+
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, fmt.Errorf("failed to find user: %w", err)
+	}
+
+	return &repository.User{
+		ID:    user.Ulid,
+		Email: user.Email,
+		Name:  user.Name,
+	}, nil
+}
+
 func (r *UserRepository) Create(ctx context.Context, user *repository.User) error {
 	tx, err := r.client.Tx(ctx)
 	if err != nil {

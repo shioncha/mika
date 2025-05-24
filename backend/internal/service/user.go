@@ -123,3 +123,11 @@ func (s *AuthService) SignIn(ctx context.Context, params SignInParams) (*SignInR
 		RefreshToken: refreshToken,
 	}, nil
 }
+
+func (s *AuthService) GetByUlid(ctx context.Context, userUlid string) (*repository.User, error) {
+	user, err := s.userRepo.GetByUlid(ctx, userUlid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user by ulid: %w", err)
+	}
+	return user, nil
+}

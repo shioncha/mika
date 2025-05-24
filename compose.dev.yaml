@@ -1,4 +1,17 @@
 services:
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - 80:80
+    networks:
+      - backend
+    volumes:
+      - ./frontend/:/app
+      - /app/node_modules
+
   backend:
     build:
       context: ./backend/

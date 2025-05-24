@@ -3,10 +3,10 @@ import "./App.css";
 import { useContext } from "react";
 import { Link } from "react-router";
 
-import { AuthContext } from "./hooks/auth_context";
-import { UserContext } from "./hooks/user_context";
+import { AuthContext } from "../hooks/auth_context";
+import { UserContext } from "../hooks/user_context";
 
-function App() {
+function SettingsPage() {
   const { isAuthenticated } = useContext(AuthContext);
   const { user } = useContext(UserContext);
 
@@ -24,4 +24,4 @@ function App() {
   );
 }
 
-export default App;
+export default SettingsPage;

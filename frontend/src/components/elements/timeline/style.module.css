@@ -1,0 +1,83 @@
+.date {
+  background-color: #eee;
+  border-radius: calc(6.4px + 0.8rem);
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 0.8rem;
+  margin: 24px auto 0;
+  padding: 6.4px 12.8px;
+  text-align: center;
+  width: fit-content;
+}
+
+.posts {
+  background-color: var(--c-bg-primary);
+  border-radius: 24px;
+  margin: 12px 0 0;
+}
+
+.post {
+  color: inherit;
+  display: block;
+  padding: 24px;
+}
+.post:hover {
+  border-radius: 24px;
+  background-color: var(--c-bg-secondary);
+  text-decoration: none;
+}
+.post:not(:last-child) {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.contentContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.content {
+  margin: 0;
+  word-break: break-word;
+}
+
+.time {
+  color: var(--c-text-secondary);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.tag {
+  color: var(--c-text-secondary);
+}
+
+.checkbox {
+}
+
+.animation {
+  animation: fade-in ease-in-out 0.2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeout {
+  animation: fade-out ease-in-out 0.2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

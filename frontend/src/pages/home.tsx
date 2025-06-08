@@ -1,12 +1,13 @@
 import { Link } from "react-router";
+import style from "../styles/pages/home.module.css";
 
 function HomePage() {
   return (
-    <div>
+    <div className={style.container}>
       <h1>Mika</h1>
       <p>This is a lifelog app.</p>
-      <Link to="/signin">Sign In</Link>
-      <Link to="/signup">Sign Up</Link>
+      <Link to="/signin" className={style.link}>Sign In</Link>
+      <Link to="/signup" className={style.link}>Sign Up</Link>
     </div>
   );
 }

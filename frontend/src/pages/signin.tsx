@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { AuthContext } from "../hooks/auth_context.tsx";
+import style from "../styles/pages/signin.module.css";
 
 type SignInResponse = {
   token: string;
@@ -11,53 +12,83 @@ type SignInResponse = {
 function SignInPage() {
   const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
   async function handleSignIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
     setLoading(true);
-    const response = await fetch("/api/sign-in", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    setLoading(false);
-    const data: SignInResponse = await response.json();
-    if (response.status == 200) {
-      login(data.token, data.refresh_token);
-      window.localStorage.setItem("token", data.token);
-      window.localStorage.setItem("refresh_token", data.refresh_token);
-      navigate("/");
-    }
-    if (response.status == 401) {
-      alert("Invalid email or password");
-    }
-    if (response.status == 500) {
-      alert("Server error");
+    try {
+      const response = await fetch("/api/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data: SignInResponse = await response.json();
+
+      if (response.status == 200) {
+        login(data.token, data.refresh_token);
+        window.localStorage.setItem("token", data.token);
+        window.localStorage.setItem("refresh_token", data.refresh_token);
+        navigate("/");
+      } else if (response.status == 400 || response.status == 401) {
+        setError("Invalid email or password. Please try again.");
+      } else {
+        setError("Internal server error. Please try again later.");
+      }
+    } catch {
+      setError("Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div>
+    <div className={style.container}>
       <h1>Sign In</h1>
       <p>Sign in to your account</p>
-      <form onSubmit={handleSignIn}>
-        <label>
-          Email:
-          <input type="email" name="email" required />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input type="password" name="password" required />
-        </label>
-        <button type="submit" disabled={loading}>
+      {error && <p className={style.error}>{error}</p>}
+      <form autoComplete="on" onSubmit={handleSignIn} className={style.form}>
+        <div className={style.formGroup}>
+          <label htmlFor="email" className={style.label}>Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            aria-required="true"
+            aria-invalid={error ? "true" : "false"}
+            className={style.input}
+          />
+        </div>
+        <div className={style.formGroup}>
+          <label htmlFor="password" className={style.label}>Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            minLength={8}
+            required
+            aria-required="true"
+            aria-invalid={error ? "true" : "false"}
+            className={style.input}
+          />
+        </div>
+        <button type="submit" disabled={loading} className={style.button}>
           {loading ? "Loading..." : "Sign In"}
         </button>
       </form>

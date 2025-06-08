@@ -16,7 +16,7 @@ CMD ["pnpm", "dev"]
 
 
 # build stage
-FROM node:22-slim AS builder
+FROM node:22-slim AS build
 
 WORKDIR /app
 

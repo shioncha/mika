@@ -7,7 +7,7 @@ services:
     ports:
       - 80:80
     networks:
-      - backend
+      - frontend
     volumes:
       - ./frontend/:/app
       - /app/node_modules
@@ -17,9 +17,10 @@ services:
       context: ./backend/
       dockerfile: Dockerfile
       target: dev
-    ports:
-      - 8080:8080
+    expose:
+      - 8080
     networks:
+      - frontend
       - backend
     depends_on:
       db:
@@ -54,5 +55,7 @@ volumes:
   db-store:
 
 networks:
+  frontend:
+    driver: bridge
   backend:
     driver: bridge

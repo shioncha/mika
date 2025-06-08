@@ -7,6 +7,7 @@ import { AuthContext } from "../hooks/auth_context";
 import HomePage from "../pages/home";
 import SettingsPage from "../pages/settings";
 import SignInPage from "../pages/signin";
+import SignUpPage from "../pages/signup";
 import PrivateRoute from "./private";
 import PublicRoute from "./public";
 
@@ -25,6 +26,7 @@ function AppRoutes() {
       </Route>
       <Route element={<PublicRoute />}>
         <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
       </Route>
     </Routes>
   );

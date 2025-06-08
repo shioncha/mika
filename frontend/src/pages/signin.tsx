@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import { AuthContext } from "../hooks/auth_context.tsx";
 import style from "../styles/pages/signin.module.css";
@@ -92,6 +92,9 @@ function SignInPage() {
           {loading ? "Loading..." : "Sign In"}
         </button>
       </form>
+      <p>
+        Don't have an account? <Link to="/signup">Sign Up</Link>
+      </p>
     </div>
   );
 }

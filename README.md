@@ -6,6 +6,19 @@ Mika is a life log app.
 
 In order to run this project, you need to install Docker.
 
+### Setup
+
+Create a `.env` file in the root directory of your project.
+
+```env
+JWT_PRIVATE_KEY_BASE64=
+JWT_PUBLIC_KEY_BASE64=
+
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+```
+
 ### Development
 
 ```Shell

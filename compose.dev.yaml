@@ -1,8 +1,7 @@
 services:
   frontend:
     build:
-      context: ./frontend/
-      dockerfile: Dockerfile
+      context: ./frontend
       target: dev
     ports:
       - 80:80
@@ -14,14 +13,21 @@ services:
 
   backend:
     build:
-      context: ./backend/
-      dockerfile: Dockerfile
+      context: ./backend
       target: dev
     expose:
       - 8080
     networks:
       - frontend
       - backend
+    environment:
+      - JWT_PRIVATE_KEY_BASE64=${JWT_PRIVATE_KEY_BASE64}
+      - JWT_PUBLIC_KEY_BASE64=${JWT_PUBLIC_KEY_BASE64}
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     depends_on:
       db:
         condition: service_healthy
@@ -33,9 +39,9 @@ services:
     expose:
       - 5432
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=db
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - db-store:/var/lib/postgresql/data
     networks:

@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
+import Button from "../components/elements/Button.tsx";
 import { AuthContext } from "../hooks/auth_context.tsx";
 import style from "../styles/pages/signin.module.css";
 
@@ -60,7 +61,9 @@ function SignInPage() {
       {error && <p className={style.error}>{error}</p>}
       <form autoComplete="on" onSubmit={handleSignIn} className={style.form}>
         <div className={style.formGroup}>
-          <label htmlFor="email" className={style.label}>Email</label>
+          <label htmlFor="email" className={style.label}>
+            Email
+          </label>
           <input
             id="email"
             name="email"
@@ -74,7 +77,9 @@ function SignInPage() {
           />
         </div>
         <div className={style.formGroup}>
-          <label htmlFor="password" className={style.label}>Password</label>
+          <label htmlFor="password" className={style.label}>
+            Password
+          </label>
           <input
             id="password"
             name="password"
@@ -88,9 +93,9 @@ function SignInPage() {
             className={style.input}
           />
         </div>
-        <button type="submit" disabled={loading} className={style.button}>
+        <Button type="submit" disabled={loading}>
           {loading ? "Loading..." : "Sign In"}
-        </button>
+        </Button>
       </form>
       <p>
         Don't have an account? <Link to="/signup">Sign Up</Link>

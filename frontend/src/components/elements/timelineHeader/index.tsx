@@ -1,5 +1,6 @@
 import { CiCalendar, CiCircleCheck } from "react-icons/ci";
 
+import Button from "../Button";
 import style from "./style.module.css";
 
 interface Props {
@@ -14,16 +15,16 @@ function TimelineHeaderComponent(props: Props) {
     <div className={style.header}>
       <h1>Timeline</h1>
       <div className={style.icons}>
-        <button className={style.icon} aria-label="日付を選択する">
+        <Button variant="icon" aria-label="日付を選択する">
           <CiCalendar color="white" size="1.5rem" />
-        </button>
-        <button
-          className={style.icon}
+        </Button>
+        <Button
+          variant="icon"
           aria-label="未チェックのみを表示する"
           onClick={() => setOnlyUnchecked(!onlyUnchecked)}
         >
           <CiCircleCheck color="white" size="1.5rem" />
-        </button>
+        </Button>
       </div>
     </div>
   );

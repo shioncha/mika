@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
+import Button from "../components/elements/Button.tsx";
 import { AuthContext } from "../hooks/auth_context.tsx";
 import style from "../styles/pages/signup.module.css";
 
@@ -38,7 +39,12 @@ function SignUpPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, password_confirm: passwordConfirm }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          password_confirm: passwordConfirm,
+        }),
       });
       const data: SignUpResponse = await response.json();
 
@@ -66,7 +72,9 @@ function SignUpPage() {
       {error && <p className={style.error}>{error}</p>}
       <form autoComplete="on" onSubmit={handleSignUp} className={style.form}>
         <div className={style.formGroup}>
-          <label htmlFor="name" className={style.label}>Name</label>
+          <label htmlFor="name" className={style.label}>
+            Name
+          </label>
           <input
             id="name"
             name="name"
@@ -80,7 +88,9 @@ function SignUpPage() {
           />
         </div>
         <div className={style.formGroup}>
-          <label htmlFor="email" className={style.label}>Email</label>
+          <label htmlFor="email" className={style.label}>
+            Email
+          </label>
           <input
             id="email"
             name="email"
@@ -94,7 +104,9 @@ function SignUpPage() {
           />
         </div>
         <div className={style.formGroup}>
-          <label htmlFor="password" className={style.label}>Password</label>
+          <label htmlFor="password" className={style.label}>
+            Password
+          </label>
           <input
             id="password"
             name="password"
@@ -109,7 +121,9 @@ function SignUpPage() {
           />
         </div>
         <div className={style.formGroup}>
-          <label htmlFor="passwordConfirm" className={style.label}>Confirm Password</label>
+          <label htmlFor="passwordConfirm" className={style.label}>
+            Confirm Password
+          </label>
           <input
             id="passwordConfirm"
             name="passwordConfirm"
@@ -123,9 +137,9 @@ function SignUpPage() {
             className={style.input}
           />
         </div>
-        <button type="submit" disabled={loading} className={style.button}>
+        <Button type="submit" disabled={loading}>
           {loading ? "Loading..." : "Sign Up"}
-        </button>
+        </Button>
       </form>
       <p>
         Already have an account? <Link to="/signin">Sign In</Link>

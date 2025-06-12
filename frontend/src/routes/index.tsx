@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Route, Routes, useLocation } from "react-router";
 
 import Modal from "../components/elements/modal";
-import TimelineLayout from "../components/layouts/timeline"
+import TimelineLayout from "../components/layouts/timeline";
 import { AuthContext } from "../hooks/auth_context";
 import HomePage from "../pages/home";
 import SettingsPage from "../pages/settings";
@@ -19,7 +19,10 @@ function AppRoutes() {
 
   const mainRoutes = (
     <Routes location={background || location}>
-      <Route path="/" element={isAuthenticated ? <TimelineLayout /> : <HomePage />} />
+      <Route
+        path="/"
+        element={isAuthenticated ? <TimelineLayout /> : <HomePage />}
+      />
       <Route element={<PrivateRoute />}>
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/tags/:tag" element={<TimelineLayout />} />

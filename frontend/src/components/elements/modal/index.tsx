@@ -6,6 +6,7 @@ import { AuthContext } from "../../..//hooks/auth_context";
 import { PostAPI } from "../../../libs/api";
 import { localDate, localTime } from "../../../libs/datetime";
 import type { Post } from "../../../type/post";
+import Button from "../Button";
 import style from "./modal.module.css";
 
 export default function Modal() {
@@ -60,10 +61,12 @@ export default function Modal() {
     <div className={`${style.overlay} ${style.animation}`} onClick={closeModal}>
       <div className={style.modal} onClick={(e) => e.stopPropagation()}>
         <div className={style.header}>
-          <IoIosClose size={24} className={style.close} onClick={closeModal} />
-          <button onClick={editPost} className={style.edit}>
+          <Button variant="icon" onClick={closeModal}>
+            <IoIosClose color="white" size="1.5rem" />
+          </Button>
+          <Button variant="primary" onClick={editPost}>
             編集
-          </button>
+          </Button>
         </div>
         <textarea defaultValue={posts[0]?.Content} className={style.textarea} />
         {/* <p className={style.dueDate}>
@@ -82,9 +85,9 @@ export default function Modal() {
           最終更新: {localDate(posts[0]?.UpdatedAt)}{" "}
           {localTime(posts[0]?.UpdatedAt)}
         </p>
-        <button onClick={deletePost} className={style.button}>
+        <Button variant="primary" onClick={deletePost}>
           削除
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import Button from "../components/elements/Button.tsx";
+import InputText from "../components/elements/InputText.tsx";
 import { AuthContext } from "../hooks/auth_context.tsx";
 import style from "../styles/pages/signin.module.css";
 
@@ -64,7 +65,7 @@ function SignInPage() {
           <label htmlFor="email" className={style.label}>
             Email
           </label>
-          <input
+          <InputText
             id="email"
             name="email"
             type="email"
@@ -73,14 +74,14 @@ function SignInPage() {
             required
             aria-required="true"
             aria-invalid={error ? "true" : "false"}
-            className={style.input}
           />
         </div>
         <div className={style.formGroup}>
           <label htmlFor="password" className={style.label}>
             Password
           </label>
-          <input
+          <InputText
+            hasPasswordMask
             id="password"
             name="password"
             type="password"
@@ -90,7 +91,6 @@ function SignInPage() {
             required
             aria-required="true"
             aria-invalid={error ? "true" : "false"}
-            className={style.input}
           />
         </div>
         <Button type="submit" disabled={loading}>

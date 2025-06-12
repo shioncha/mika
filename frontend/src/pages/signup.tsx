@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import Button from "../components/elements/Button.tsx";
+import InputText from "../components/elements/InputText.tsx";
 import { AuthContext } from "../hooks/auth_context.tsx";
 import style from "../styles/pages/signup.module.css";
 
@@ -75,7 +76,7 @@ function SignUpPage() {
           <label htmlFor="name" className={style.label}>
             Name
           </label>
-          <input
+          <InputText
             id="name"
             name="name"
             type="text"
@@ -84,14 +85,13 @@ function SignUpPage() {
             required
             aria-required="true"
             aria-invalid={error ? "true" : "false"}
-            className={style.input}
           />
         </div>
         <div className={style.formGroup}>
           <label htmlFor="email" className={style.label}>
             Email
           </label>
-          <input
+          <InputText
             id="email"
             name="email"
             type="email"
@@ -107,7 +107,8 @@ function SignUpPage() {
           <label htmlFor="password" className={style.label}>
             Password
           </label>
-          <input
+          <InputText
+            hasPasswordMask
             id="password"
             name="password"
             type="password"
@@ -124,7 +125,8 @@ function SignUpPage() {
           <label htmlFor="passwordConfirm" className={style.label}>
             Confirm Password
           </label>
-          <input
+          <InputText
+            hasPasswordMask
             id="passwordConfirm"
             name="passwordConfirm"
             type="password"

@@ -20,6 +20,8 @@ RUN go mod download
 
 COPY . .
 
+RUN go generate ./ent
+
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd/api
 
 # runtime stage

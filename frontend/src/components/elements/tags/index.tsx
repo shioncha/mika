@@ -43,16 +43,17 @@ function TagsComponent({
       >
         All
       </Link>
-      {tags.map((t) => (
-        <Link
-          key={t.ID}
-          to={`/tags/${t.Name}`}
-          onClick={handleLinkClick}
-          className={`${style.tag} ${t.Name == tag ? style.active : ""}`}
-        >
-          #{t.Name}
-        </Link>
-      ))}
+      {tags != null &&
+        tags.map((t) => (
+          <Link
+            key={t.ID}
+            to={`/tags/${t.Name}`}
+            onClick={handleLinkClick}
+            className={`${style.tag} ${t.Name == tag ? style.active : ""}`}
+          >
+            #{t.Name}
+          </Link>
+        ))}
     </div>
   );
 }

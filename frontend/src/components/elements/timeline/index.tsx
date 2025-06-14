@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { AuthContext } from "../../../hooks/auth_context";
 import { PostsAPI, TagsPostsAPI } from "../../../libs/api";
-import { groupByDate } from "../../../libs/datetime";
+import { formatDate, groupByDate, localDate } from "../../../libs/datetime";
 import type { Post } from "../../../type/post";
 import List from "../List";
 import ListElementPost from "../ListElementPost";
@@ -64,7 +64,7 @@ function TimelineComponent({
       )}
       {sortedDates.map((date) => (
         <div key={date} className={style.animation}>
-          <span className={style.date}>{date}</span>
+          <span className={style.date}>{localDate(formatDate(date))}</span>
           <List className={style.posts}>
             {groupedPosts[date].length === 0 ? (
               <div className={style.noPosts}>投稿はありません</div>

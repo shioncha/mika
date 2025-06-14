@@ -1,7 +1,7 @@
 import DOMpurify from "dompurify";
 import { Link, useLocation } from "react-router";
 
-import { localTime } from "../../libs/datetime";
+import { formatDate, localTime } from "../../libs/datetime";
 import style from "../../styles/components/elements/ListElementPost.module.css";
 import type { Post } from "../../type/post";
 
@@ -66,7 +66,7 @@ function ListElementPost({ post }: ListElementPostProps) {
         />
       </div>
       <span className={style.time} onClick={(e) => e.stopPropagation()}>
-        {localTime(post.CreatedAt)}
+        {localTime(formatDate(post.CreatedAt))}
       </span>
     </Link>
   );

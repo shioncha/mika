@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router";
 
 import { AuthContext } from "../../..//hooks/auth_context";
 import { PostAPI } from "../../../libs/api";
-import { localDate, localTime } from "../../../libs/datetime";
+import { formatDate, localDate, localTime } from "../../../libs/datetime";
 import type { Post } from "../../../type/post";
 import Button from "../Button";
 import style from "./modal.module.css";
@@ -78,12 +78,12 @@ export default function Modal() {
             : "未設定"}
         </p> */}
         <p>
-          作成: {localDate(posts[0]?.CreatedAt)}{" "}
-          {localTime(posts[0]?.CreatedAt)}
+          作成: {localDate(formatDate(posts[0]?.CreatedAt))}{" "}
+          {localTime(formatDate(posts[0]?.CreatedAt))}
         </p>
         <p>
-          最終更新: {localDate(posts[0]?.UpdatedAt)}{" "}
-          {localTime(posts[0]?.UpdatedAt)}
+          最終更新: {localDate(formatDate(posts[0]?.UpdatedAt))}{" "}
+          {localTime(formatDate(posts[0]?.UpdatedAt))}
         </p>
         <Button variant="primary" onClick={deletePost}>
           削除

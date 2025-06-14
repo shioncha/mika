@@ -4,8 +4,22 @@ interface GroupedPostsProps {
   [key: string]: Post[];
 }
 
-function localDate(dateString: string): string {
-  const date = new Date(dateString);
+function formatDate(dateString: string): Date {
+  if (!dateString) {
+    return new Date();
+  }
+  try {
+    const normalized = dateString.replace(
+      /(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})\.(\d{3})\d{3} \+0000 UTC/,
+      "$1T$2.$3Z"
+    );
+    return new Date(normalized);
+  } catch {
+    return new Date();
+  }
+}
+
+function localDate(date: Date): string {
   return date.toLocaleString("ja-JP", {
     year: "numeric",
     month: "2-digit",
@@ -13,8 +27,7 @@ function localDate(dateString: string): string {
   });
 }
 
-function localTime(dateString: string): string {
-  const date = new Date(dateString);
+function localTime(date: Date): string {
   return date.toLocaleString("ja-JP", {
     hour: "numeric",
     minute: "numeric",
@@ -23,21 +36,12 @@ function localTime(dateString: string): string {
 }
 
 function groupByDate(data: Post[]): GroupedPostsProps {
-  const grouped: GroupedPostsProps = {};
-
-  if (!data || data.length === 0) {
-    return grouped;
-  }
-
-  data.forEach((item) => {
-    const date = localDate(item.CreatedAt);
-    if (!grouped[date]) {
-      grouped[date] = [];
-    }
+  return data.reduce((grouped: GroupedPostsProps, item) => {
+    const date = localDate(formatDate(item.CreatedAt));
+    grouped[date] = grouped[date] || [];
     grouped[date].push(item);
-  });
-
-  return grouped;
+    return grouped;
+  }, {});
 }
 
-export { groupByDate, localDate, localTime };
+export { formatDate, groupByDate, localDate, localTime };

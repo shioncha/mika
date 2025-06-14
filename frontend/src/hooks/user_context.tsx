@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect,useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { AuthContext } from "./auth_context";
 
@@ -28,11 +28,7 @@ const UserContext = createContext<UserContextType>({
 
 function UserProvider({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, token } = useContext(AuthContext);
-  const [user, setUser] = useState<{
-    id: string;
-    name: string;
-    email: string;
-  } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

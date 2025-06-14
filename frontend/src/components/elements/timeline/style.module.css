@@ -12,46 +12,7 @@
 }
 
 .posts {
-  background-color: var(--c-bg-primary);
-  border-radius: 24px;
   margin: 12px 0 0;
-}
-
-.post {
-  color: inherit;
-  display: block;
-  padding: 24px;
-}
-.post:hover {
-  border-radius: 24px;
-  background-color: var(--c-bg-secondary);
-  text-decoration: none;
-}
-.post:not(:last-child) {
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.contentContainer {
-  display: flex;
-  flex-direction: row;
-}
-
-.content {
-  margin: 0;
-  word-break: break-word;
-}
-
-.time {
-  color: var(--c-text-secondary);
-  font-size: 0.8rem;
-  margin: 0;
-}
-
-.tag {
-  color: var(--c-text-secondary);
-}
-
-.checkbox {
 }
 
 .animation {

@@ -6,6 +6,7 @@ import TimelineLayout from "../components/layouts/timeline";
 import { AuthContext } from "../hooks/auth_context";
 import Base from "../layouts/Base";
 import HomePage from "../pages/home";
+import NewPage from "../pages/new";
 import SettingsPage from "../pages/settings";
 import SignInPage from "../pages/signin";
 import SignUpPage from "../pages/signup";
@@ -26,6 +27,7 @@ function AppRoutes() {
           element={isAuthenticated ? <TimelineLayout /> : <HomePage />}
         />
         <Route element={<PrivateRoute />}>
+          <Route path="/new" element={<NewPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/tags/:tag" element={<TimelineLayout />} />
         </Route>

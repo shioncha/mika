@@ -1,0 +1,30 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 16px 0;
+}
+
+.input {
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  padding: 8px;
+  width: 100%;
+}
+.input:focus {
+  border-color: #555;
+  outline: none;
+}
+
+.error {
+  background-color: color-mix(in srgb, #f00 10%, #fff);
+  border: 1px solid color-mix(in srgb, #f00 20%, #fff);
+  border-radius: 4px;
+  color: red;
+  padding: 8px;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}

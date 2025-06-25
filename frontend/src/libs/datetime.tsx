@@ -36,6 +36,10 @@ function localTime(date: Date): string {
 }
 
 function groupByDate(data: Post[]): GroupedPostsProps {
+  if (!data || !Array.isArray(data)) {
+    return {};
+  }
+
   return data.reduce((grouped: GroupedPostsProps, item) => {
     const date = localDate(formatDate(item.CreatedAt));
     grouped[date] = grouped[date] || [];

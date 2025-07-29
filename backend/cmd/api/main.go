@@ -1,42 +1,73 @@
 package main
 
 import (
+	"log"
+	"os"
+
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/shioncha/mika/backend/internal/auth"
 	"github.com/shioncha/mika/backend/internal/database"
 	"github.com/shioncha/mika/backend/internal/handler"
 	"github.com/shioncha/mika/backend/internal/middleware"
-	entrepogitory "github.com/shioncha/mika/backend/internal/repository/ent"
+	ent "github.com/shioncha/mika/backend/internal/repository/ent"
 	"github.com/shioncha/mika/backend/internal/router"
 	"github.com/shioncha/mika/backend/internal/service"
 )
 
-func main() {
-	godotenv.Load(".env")
+type App struct {
+	router  *gin.Engine
+	cleanup func()
+}
 
+func newApp() (*App, error) {
 	privateKey, publicKey, err := auth.LoadKeys()
 	if err != nil {
-		panic("Failed to load JWT keys: " + err.Error())
+		return nil, err
 	}
 
 	client := database.SetupClient()
-	defer database.CloseClient(client)
 
-	userRepo := entrepogitory.NewUserRepository(client)
+	userRepo := ent.NewUserRepository(client)
 	authService := service.NewAuthService(userRepo, publicKey, privateKey)
 	authHandler := handler.NewAuthHandler(authService)
 
-	postRepo := entrepogitory.NewPostRepository(client)
+	postRepo := ent.NewPostRepository(client)
 	postService := service.NewPostService(client, postRepo)
 	postHandler := handler.NewPostHandler(postService)
 
-	tagRepo := entrepogitory.NewTagRepository(client)
+	tagRepo := ent.NewTagRepository(client)
 	tagService := service.NewTagService(tagRepo)
 	tagHandler := handler.NewTagHandler(tagService)
 
 	authMiddleware := middleware.NewAuthRequiredMiddleware(publicKey)
 
 	router := router.SetupRouter(authHandler, postHandler, tagHandler, authMiddleware)
-	router.Run(":8080")
+
+	cleanupFunc := func() {
+		database.CloseClient(client)
+	}
+
+	return &App{
+		router:  router,
+		cleanup: cleanupFunc,
+	}, nil
+}
+
+func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("Warning: .env file not found")
+	}
+
+	app, err := newApp()
+	if err != nil {
+		log.Fatalf("Failed to initialize application: %v", err)
+	}
+
+	defer app.cleanup()
+
+	if err := app.router.Run(":" + os.Getenv("BACKEND_PORT")); err != nil {
+		log.Fatalf("Failed to run server: %v", err)
+	}
 }

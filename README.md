@@ -14,6 +14,8 @@ Create a `.env` file in the root directory of your project.
 JWT_PRIVATE_KEY_BASE64=
 JWT_PUBLIC_KEY_BASE64=
 
+FRONTEND_URL=http://localhost
+
 DB_USER=
 DB_PASSWORD=
 DB_NAME=

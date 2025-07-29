@@ -1,6 +1,10 @@
 package router
 
 import (
+	"os"
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/shioncha/mika/backend/internal/handler"
 	"github.com/shioncha/mika/backend/internal/middleware"
@@ -13,6 +17,25 @@ func SetupRouter(
 	am *middleware.AuthRequiredMiddleware,
 ) *gin.Engine {
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			os.Getenv("FRONTEND_URL"),
+		},
+		AllowMethods: []string{
+			"GET",
+			"POST",
+			"PUT",
+			"DELETE",
+		},
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Type",
+			"Authorization",
+		},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	/*
 	 * Public routes

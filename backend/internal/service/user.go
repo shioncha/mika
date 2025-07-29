@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"crypto/rsa"
 	"fmt"
 
 	"github.com/shioncha/mika/backend/internal/auth"
@@ -10,12 +11,16 @@ import (
 )
 
 type AuthService struct {
-	userRepo repository.UserRepository
+	userRepo   repository.UserRepository
+	publicKey  *rsa.PublicKey
+	privateKey *rsa.PrivateKey
 }
 
-func NewAuthService(userRepo repository.UserRepository) *AuthService {
+func NewAuthService(userRepo repository.UserRepository, publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) *AuthService {
 	return &AuthService{
-		userRepo: userRepo,
+		userRepo:   userRepo,
+		publicKey:  publicKey,
+		privateKey: privateKey,
 	}
 }
 
@@ -67,7 +72,7 @@ func (s *AuthService) SignUp(ctx context.Context, params SignUpParams) (*SignUpR
 	}
 
 	// JWTトークン生成
-	token, err := auth.GenerateJWT(userID)
+	token, err := auth.GenerateJWT(userID, s.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate token: %w", err)
 	}
@@ -109,7 +114,7 @@ func (s *AuthService) SignIn(ctx context.Context, params SignInParams) (*SignInR
 	}
 
 	// JWTトークン生成
-	token, err := auth.GenerateJWT(user.ID)
+	token, err := auth.GenerateJWT(user.ID, s.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate token: %w", err)
 	}

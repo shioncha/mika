@@ -6,7 +6,7 @@ import (
 	"github.com/shioncha/mika/backend/internal/middleware"
 )
 
-func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, th *handler.TagHandler) *gin.Engine {
+func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, th *handler.TagHandler, am *middleware.AuthRequiredMiddleware) *gin.Engine {
 	router := gin.Default()
 
 	router.POST("/sign-up", ah.SignUp)
@@ -14,7 +14,7 @@ func SetupRouter(ah *handler.AuthHandler, ph *handler.PostHandler, th *handler.T
 	router.POST("/sign-out")
 
 	authorized := router.Group("/")
-	authorized.Use(middleware.AuthRequired())
+	authorized.Use(am.AuthRequired())
 	{
 		authorized.GET("/users/me", ah.Get)
 

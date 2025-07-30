@@ -15,20 +15,17 @@ type Post struct {
 
 type PostRepository interface {
 	// ユーザーの投稿一覧を取得
-	GetPostsByUserID(ctx context.Context, userID int) ([]*Post, error)
+	GetPostsByUserID(ctx context.Context, userID string) ([]*Post, error)
 
 	// 投稿を取得
-	GetPostByPostID(ctx context.Context, userID int, postID string) (*Post, error)
+	GetPostByPostID(ctx context.Context, userID string, postID string) (*Post, error)
 
 	// 投稿を作成
-	CreatePost(ctx context.Context, tx *ent.Tx, userID int, post string, tags []int) error
+	CreatePost(ctx context.Context, tx *ent.Tx, userID string, post string, tags []string) error
 
 	// 投稿を削除
-	DeletePost(ctx context.Context, userID int, postID string) error
-
-	// ユーザーのULIDからユーザーIDを取得
-	GetUserIDByUlid(ctx context.Context, ulid string) (int, error)
+	DeletePost(ctx context.Context, userID string, postID string) error
 
 	// タグを作成
-	CreateTags(ctx context.Context, tx *ent.Tx, userID int, tag []string) ([]int, error)
+	CreateTags(ctx context.Context, tx *ent.Tx, userID string, tag []string) ([]string, error)
 }

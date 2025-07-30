@@ -7,7 +7,6 @@ import (
 
 	"github.com/shioncha/mika/backend/internal/auth"
 	"github.com/shioncha/mika/backend/internal/repository"
-	"github.com/shioncha/mika/backend/internal/utils"
 )
 
 type AuthService struct {
@@ -56,12 +55,8 @@ func (s *AuthService) SignUp(ctx context.Context, params SignUpParams) (*SignUpR
 		return nil, fmt.Errorf("failed to hash password: %w", err)
 	}
 
-	// ユーザーID生成
-	userID := utils.GenerateULID()
-
 	// ユーザー作成
 	user := &repository.User{
-		ID:           userID,
 		Email:        email,
 		Name:         params.Name,
 		PasswordHash: hashedPassword,
@@ -72,7 +67,7 @@ func (s *AuthService) SignUp(ctx context.Context, params SignUpParams) (*SignUpR
 	}
 
 	// JWTトークン生成
-	token, err := auth.GenerateJWT(userID, s.privateKey)
+	token, err := auth.GenerateJWT(user.ID, s.privateKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate token: %w", err)
 	}
@@ -81,7 +76,7 @@ func (s *AuthService) SignUp(ctx context.Context, params SignUpParams) (*SignUpR
 	refreshToken := "refresh_token" // TODO: Implement refresh token generation
 
 	return &SignUpResult{
-		UserID:       userID,
+		UserID:       user.ID,
 		Token:        token,
 		RefreshToken: refreshToken,
 	}, nil
@@ -129,10 +124,10 @@ func (s *AuthService) SignIn(ctx context.Context, params SignInParams) (*SignInR
 	}, nil
 }
 
-func (s *AuthService) GetByUlid(ctx context.Context, userUlid string) (*repository.User, error) {
-	user, err := s.userRepo.GetByUlid(ctx, userUlid)
+func (s *AuthService) GetByID(ctx context.Context, userID string) (*repository.User, error) {
+	user, err := s.userRepo.GetByID(ctx, userID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user by ulid: %w", err)
+		return nil, fmt.Errorf("failed to get user by id: %w", err)
 	}
 	return user, nil
 }

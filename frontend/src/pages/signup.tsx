@@ -1,18 +1,15 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import Button from "../components/elements/Button.tsx";
 import InputText from "../components/elements/InputText.tsx";
-import { AuthContext } from "../hooks/auth_context.tsx";
+import { useAuth } from "../hooks/auth_context.tsx";
+import type { AuthResponse, SignUpCredentials } from "../libs/AuthService";
+import { authService } from "../libs/AuthService";
 import style from "../styles/pages/signup.module.css";
 
-type SignUpResponse = {
-  token: string;
-  refresh_token: string;
-};
-
 function SignUpPage() {
-  const { login } = useContext(AuthContext);
+  const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -24,43 +21,30 @@ function SignUpPage() {
 
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!name || !email || !password || !passwordConfirm) {
-      setError("All fields are required.");
-      return;
-    }
-    if (password !== passwordConfirm) {
-      setError("Passwords do not match.");
+    if (!email || !password) {
+      setError("Email and password are required.");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await fetch("/api/sign-up", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          password_confirm: passwordConfirm,
-        }),
-      });
-      const data: SignUpResponse = await response.json();
+      const credentials: SignUpCredentials = {
+        name,
+        email,
+        password,
+        password_confirm: passwordConfirm,
+      };
+      const response: AuthResponse = await authService.signUp(credentials);
 
-      if (response.status == 200) {
-        login(data.token, data.refresh_token);
-        window.localStorage.setItem("token", data.token);
-        window.localStorage.setItem("refresh_token", data.refresh_token);
+      if (response.token) {
+        signIn(response.token);
         navigate("/");
-      } else if (response.status == 400 || response.status == 401) {
-        setError("Invalid email or password. Please try again.");
       } else {
-        setError("Internal server error. Please try again later.");
+        setError("Invalid email or password. Please try again.");
       }
     } catch {
-      setError("Network error. Please check your connection.");
+      console.error("Sign up failed:");
+      setError("An error occurred while signing up. Please try again later.");
     } finally {
       setLoading(false);
     }

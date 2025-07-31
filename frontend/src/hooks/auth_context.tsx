@@ -1,54 +1,126 @@
-import { createContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useNavigate } from "react-router";
+
+import apiClient from "../libs/api";
+import { setupAuthHeader } from "../libs/api";
+import { authService } from "../libs/AuthService";
 
 type AuthContextType = {
   isAuthenticated: boolean;
-  token: string | null;
-  refreshToken: string | null;
-  login: (token: string, refreshToken: string) => void;
-  logout: () => void;
-}
+  isLoading: boolean;
+  signIn: (accessToken: string) => void;
+  signOut: () => void;
+};
 
-const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  token: null,
-  refreshToken: null,
-  login: () => {},
-  logout: () => {},
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const isAuthenticated = !!accessToken;
 
   useEffect(() => {
-    const storedToken = window.localStorage.getItem("token");
-    const storedRefreshToken = window.localStorage.getItem("refresh_token");
-    if (storedToken && storedRefreshToken) {
-      setIsAuthenticated(true);
-      setToken(storedToken);
-      setRefreshToken(storedRefreshToken);
-    }
+    const checkAuthStatus = async () => {
+      try {
+        const response = await apiClient.post("/refresh-token", {
+          withCredentials: true,
+        });
+        setAccessToken(response.data.access_token);
+        apiClient.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.access_token}`;
+      } catch {
+        console.log("No active session found.");
+        setAccessToken(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuthStatus();
   }, []);
 
-  const login = (newToken: string, newRefreshToken: string) => {
-    setIsAuthenticated(true);
-    setToken(newToken);
-    setRefreshToken(newRefreshToken);
-  };
+  useEffect(() => {
+    const handleTokenRefreshed = (event: CustomEvent<string>) => {
+      console.log("Token refreshed by interceptor.");
+      setAccessToken(event.detail);
+    };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setToken(null);
-    setRefreshToken(null);
-  };
+    const handleSessionExpired = () => {
+      console.log("Session expired, signing out.");
+      signOut(true); // 強制ログアウトフラグ
+    };
+
+    window.addEventListener(
+      "tokenRefreshed",
+      handleTokenRefreshed as EventListener
+    );
+    window.addEventListener("sessionExpired", handleSessionExpired);
+
+    return () => {
+      window.removeEventListener(
+        "tokenRefreshed",
+        handleTokenRefreshed as EventListener
+      );
+      window.removeEventListener("sessionExpired", handleSessionExpired);
+    };
+  }, []);
+
+  useEffect(() => {
+    setupAuthHeader(accessToken);
+  }, [accessToken]);
+
+  const signIn = useCallback((newAccessToken: string) => {
+    setAccessToken(newAccessToken);
+    apiClient.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${newAccessToken}`;
+  }, []);
+
+  const signOut = useCallback(
+    async (isForced = false) => {
+      if (isForced) {
+        setAccessToken(null);
+        navigate("/signin");
+        return;
+      }
+
+      try {
+        await authService.signOut();
+      } catch (error) {
+        console.error("Error during sign out:", error);
+      } finally {
+        setAccessToken(null);
+        delete apiClient.defaults.headers.common["Authorization"];
+        navigate("/signin");
+      }
+    },
+    [navigate]
+  );
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, refreshToken, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, isLoading, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
-export { AuthContext, AuthProvider };
-export default AuthProvider;
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
+export { AuthProvider, useAuth };

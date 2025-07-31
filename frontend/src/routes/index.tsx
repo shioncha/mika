@@ -1,9 +1,8 @@
-import { useContext } from "react";
 import { Route, Routes, useLocation } from "react-router";
 
 import Modal from "../components/elements/modal";
 import TimelineLayout from "../components/layouts/timeline";
-import { AuthContext } from "../hooks/auth_context";
+import { useAuth } from "../hooks/auth_context";
 import Base from "../layouts/Base";
 import HomePage from "../pages/home";
 import NewPage from "../pages/new";
@@ -17,7 +16,7 @@ function AppRoutes() {
   const location = useLocation();
   const background = location.state?.background;
 
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
 
   const mainRoutes = (
     <Routes location={background || location}>

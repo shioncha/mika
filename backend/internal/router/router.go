@@ -42,7 +42,8 @@ func SetupRouter(
 	 */
 	router.POST("/sign-up", ah.SignUp)
 	router.POST("/sign-in", ah.SignIn)
-	router.POST("/sign-out")
+	router.POST("/refresh-token", ah.RefreshAccessToken)
+	router.POST("/sign-out", ah.SignOut)
 
 	/*
 	 * Private routes

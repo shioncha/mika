@@ -4,22 +4,25 @@ import (
 	"context"
 	"crypto/rsa"
 	"fmt"
+	"time"
 
 	"github.com/shioncha/mika/backend/internal/auth"
 	"github.com/shioncha/mika/backend/internal/repository"
 )
 
 type AuthService struct {
-	userRepo   repository.UserRepository
-	publicKey  *rsa.PublicKey
-	privateKey *rsa.PrivateKey
+	userRepo    repository.UserRepository
+	sessionRepo repository.SessionRepository
+	publicKey   *rsa.PublicKey
+	privateKey  *rsa.PrivateKey
 }
 
-func NewAuthService(userRepo repository.UserRepository, publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) *AuthService {
+func NewAuthService(userRepo repository.UserRepository, sessionRepo repository.SessionRepository, publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) *AuthService {
 	return &AuthService{
-		userRepo:   userRepo,
-		publicKey:  publicKey,
-		privateKey: privateKey,
+		userRepo:    userRepo,
+		sessionRepo: sessionRepo,
+		publicKey:   publicKey,
+		privateKey:  privateKey,
 	}
 }
 
@@ -36,12 +39,12 @@ type SignUpResult struct {
 	RefreshToken string
 }
 
-func (s *AuthService) SignUp(ctx context.Context, params SignUpParams) (*SignUpResult, error) {
+func (s *AuthService) SignUp(c context.Context, params SignUpParams, deviceInfo string, ipAddress string) (*SignUpResult, error) {
 	// メールアドレスの正規化
 	email := auth.NormalizeEmail(params.Email)
 
 	// メールアドレスの重複チェック
-	exists, err := s.userRepo.EmailExists(ctx, email)
+	exists, err := s.userRepo.EmailExists(c, email)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check email: %w", err)
 	}
@@ -62,7 +65,7 @@ func (s *AuthService) SignUp(ctx context.Context, params SignUpParams) (*SignUpR
 		PasswordHash: hashedPassword,
 	}
 
-	if err := s.userRepo.Create(ctx, user); err != nil {
+	if err := s.userRepo.Create(c, user); err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 
@@ -73,7 +76,10 @@ func (s *AuthService) SignUp(ctx context.Context, params SignUpParams) (*SignUpR
 	}
 
 	// リフレッシュトークン生成
-	refreshToken := "refresh_token" // TODO: Implement refresh token generation
+	refreshToken, err := s.sessionRepo.CreateSession(c, user.ID, deviceInfo, ipAddress, 7*24*time.Hour)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create session: %w", err)
+	}
 
 	return &SignUpResult{
 		UserID:       user.ID,
@@ -93,12 +99,12 @@ type SignInResult struct {
 	RefreshToken string
 }
 
-func (s *AuthService) SignIn(ctx context.Context, params SignInParams) (*SignInResult, error) {
+func (s *AuthService) SignIn(c context.Context, params SignInParams, deviceInfo string, ipAddress string) (*SignInResult, error) {
 	// メールアドレスの正規化
 	email := auth.NormalizeEmail(params.Email)
 
 	// ユーザー検索
-	user, err := s.userRepo.FindByEmail(ctx, email)
+	user, err := s.userRepo.FindByEmail(c, email)
 	if err != nil {
 		return nil, fmt.Errorf("invalid credentials")
 	}
@@ -115,7 +121,10 @@ func (s *AuthService) SignIn(ctx context.Context, params SignInParams) (*SignInR
 	}
 
 	// リフレッシュトークン生成
-	refreshToken := "refresh_token" // TODO: Implement refresh token generation
+	refreshToken, err := s.sessionRepo.CreateSession(c, user.ID, deviceInfo, ipAddress, 7*24*time.Hour)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create session: %w", err)
+	}
 
 	return &SignInResult{
 		UserID:       user.ID,
@@ -124,8 +133,40 @@ func (s *AuthService) SignIn(ctx context.Context, params SignInParams) (*SignInR
 	}, nil
 }
 
-func (s *AuthService) GetByID(ctx context.Context, userID string) (*repository.User, error) {
-	user, err := s.userRepo.GetByID(ctx, userID)
+type RefreshAccessTokenResult struct {
+	Token string
+}
+
+func (s *AuthService) RefreshAccessToken(c context.Context, oldRefreshToken string) (*RefreshAccessTokenResult, error) {
+	session, err := s.sessionRepo.GetSession(c, oldRefreshToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get session: %w", err)
+	}
+
+	if err := s.sessionRepo.ExtendSession(c, oldRefreshToken, 7*24*time.Hour); err != nil {
+		return nil, fmt.Errorf("failed to extend session: %w", err)
+	}
+
+	newAccessToken, err := auth.GenerateJWT(session.UserID, s.privateKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate new access token: %w", err)
+	}
+
+	return &RefreshAccessTokenResult{
+		Token: newAccessToken,
+	}, nil
+}
+
+func (s *AuthService) SignOut(c context.Context, refreshToken string) error {
+	if err := s.sessionRepo.DeleteSession(c, refreshToken); err != nil {
+		return fmt.Errorf("failed to delete session: %w", err)
+	}
+
+	return nil
+}
+
+func (s *AuthService) GetByID(c context.Context, userID string) (*repository.User, error) {
+	user, err := s.userRepo.GetByID(c, userID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user by id: %w", err)
 	}

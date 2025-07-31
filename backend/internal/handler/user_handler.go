@@ -8,13 +8,13 @@ import (
 
 func (h *AuthHandler) Get(c *gin.Context) {
 	uid, _ := c.Get("user_id")
-	uidStr, ok := uid.(string)
+	userID, ok := uid.(string)
 	if !ok {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	res, err := h.authService.GetByUlid(c.Request.Context(), uidStr)
+	res, err := h.authService.GetByID(c.Request.Context(), userID)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return

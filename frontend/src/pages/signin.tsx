@@ -1,18 +1,15 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import Button from "../components/elements/Button.tsx";
 import InputText from "../components/elements/InputText.tsx";
-import { AuthContext } from "../hooks/auth_context.tsx";
+import { useAuth } from "../hooks/auth_context.tsx";
+import type { AuthResponse, SignInCredentials } from "../libs/AuthService";
+import { authService } from "../libs/AuthService";
 import style from "../styles/pages/signin.module.css";
 
-type SignInResponse = {
-  token: string;
-  refresh_token: string;
-};
-
 function SignInPage() {
-  const { login } = useContext(AuthContext);
+  const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -29,27 +26,18 @@ function SignInPage() {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/sign-in", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      const data: SignInResponse = await response.json();
+      const credentials: SignInCredentials = { email, password };
+      const response: AuthResponse = await authService.signIn(credentials);
 
-      if (response.status == 200) {
-        login(data.token, data.refresh_token);
-        window.localStorage.setItem("token", data.token);
-        window.localStorage.setItem("refresh_token", data.refresh_token);
+      if (response && response.token !== "") {
+        signIn(response.token);
         navigate("/");
-      } else if (response.status == 400 || response.status == 401) {
-        setError("Invalid email or password. Please try again.");
       } else {
-        setError("Internal server error. Please try again later.");
+        setError("Invalid email or password. Please try again.");
       }
     } catch {
-      setError("Network error. Please check your connection.");
+      console.error("Sign in failed:");
+      setError("An error occurred while signing in. Please try again later.");
     } finally {
       setLoading(false);
     }

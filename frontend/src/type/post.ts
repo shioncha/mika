@@ -1,5 +1,5 @@
 interface Post {
-  ID: number;
+  ID: string;
   Content: string;
   has_checkbox: boolean;
   is_checked: boolean;

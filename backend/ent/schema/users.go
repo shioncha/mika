@@ -5,6 +5,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	"github.com/oklog/ulid/v2"
 )
 
 // Users holds the schema definition for the Users entity.
@@ -15,9 +16,12 @@ type Users struct {
 // Fields of the Users.
 func (Users) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("id"),
-		field.String("ulid").
-			NotEmpty().
+		field.String("id").
+			MaxLen(26).
+			DefaultFunc(func() string {
+				return ulid.Make().String()
+			}).
+			Immutable().
 			Unique(),
 		field.String("email").
 			NotEmpty().

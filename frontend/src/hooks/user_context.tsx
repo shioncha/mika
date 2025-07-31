@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
-import { AuthContext } from "./auth_context";
+import { userService } from "../libs/ContentService";
+import { useAuth } from "./auth_context";
 
 type User = {
   id: string;
@@ -27,29 +28,22 @@ const UserContext = createContext<UserContextType>({
 });
 
 function UserProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, token } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isAuthenticated && token) {
-      fetch("/api/users/me", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }).then(async (response) => {
-        const data: User = await response.json();
-        if (response.status === 200) {
-          setUser(data);
-        } else {
-          setError("Failed to fetch user data");
-        }
-      });
+    if (!isAuthenticated) {
+      setUser(null);
+      setLoading(false);
+      return;
     }
-  }, [isAuthenticated, token]);
+    userService.fetchMe().then((data) => {
+      setUser(data);
+      setLoading(false);
+    });
+  }, [isAuthenticated]);
 
   return (
     <UserContext.Provider

@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
-import { AuthContext } from "../../../hooks/auth_context";
-import { TagsAPI } from "../../../libs/api";
+import { tagService } from "../../../libs/ContentService";
 import type { Tag } from "../../../type/tag";
 import style from "./style.module.css";
 
@@ -13,16 +12,21 @@ function TagsComponent({
   tag?: string;
   setFadeout: (fadeout: boolean) => void;
 }) {
-  const { token } = useContext(AuthContext);
   const [tags, setTags] = useState<Tag[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token) {
-      return;
+    async function fetchTags() {
+      try {
+        const fetchedTags = await tagService.fetchTags();
+        setTags(fetchedTags);
+      } catch {
+        console.error("Failed to fetch tags");
+      }
     }
-    TagsAPI({ method: "GET", token, setTags });
-  }, [token]);
+
+    fetchTags();
+  }, []);
 
   function handleLinkClick(e: React.MouseEvent<HTMLAnchorElement>) {
     e.preventDefault();

@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/shioncha/mika/backend/internal/service"
@@ -30,8 +32,7 @@ type SignInRequest struct {
 }
 
 type AuthResponse struct {
-	Token        string `json:"token"`
-	RefreshToken string `json:"refresh_token"`
+	Token string `json:"token"`
 }
 
 func (h *AuthHandler) SignUp(c *gin.Context) {
@@ -41,12 +42,15 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		return
 	}
 
+	deviceInfo := c.GetHeader("User-Agent")
+	ipAddress := c.ClientIP()
+
 	res, err := h.authService.SignUp(c.Request.Context(), service.SignUpParams{
 		Email:           req.Email,
 		Name:            req.Name,
 		Password:        req.Password,
 		PasswordConfirm: req.PasswordConfirm,
-	})
+	}, deviceInfo, ipAddress)
 	if err != nil && err.Error() == "email already registered" {
 		respondWithError(c, http.StatusConflict, "Email already registered")
 		return
@@ -56,9 +60,11 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		return
 	}
 
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", os.Getenv("DOMAIN"), false, true)
+
 	c.JSON(http.StatusOK, AuthResponse{
-		Token:        res.Token,
-		RefreshToken: res.RefreshToken,
+		Token: res.Token,
 	})
 }
 
@@ -69,10 +75,13 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	res, err := h.authService.SignIn(c.Request.Context(), service.SignInParams{
+	deviceInfo := c.GetHeader("User-Agent")
+	ipAddress := c.ClientIP()
+
+	res, err := h.authService.SignIn(c, service.SignInParams{
 		Email:    req.Email,
 		Password: req.Password,
-	})
+	}, deviceInfo, ipAddress)
 	if err != nil && err.Error() == "invalid credentials" {
 		respondWithError(c, http.StatusUnauthorized, "Invalid email or password")
 		return
@@ -82,10 +91,45 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		return
 	}
 
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", os.Getenv("DOMAIN"), false, true)
+
 	c.JSON(http.StatusOK, AuthResponse{
-		Token:        res.Token,
-		RefreshToken: res.RefreshToken,
+		Token: res.Token,
 	})
+}
+
+func (h *AuthHandler) RefreshAccessToken(c *gin.Context) {
+	oldRefreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Refresh token not found")
+		return
+	}
+
+	res, err := h.authService.RefreshAccessToken(c, oldRefreshToken)
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Invalid session")
+		return
+	}
+	c.JSON(http.StatusOK, AuthResponse{
+		Token: res.Token,
+	})
+}
+
+func (h *AuthHandler) SignOut(c *gin.Context) {
+	refreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		respondWithError(c, http.StatusUnauthorized, "Refresh token not found")
+		return
+	}
+
+	if err := h.authService.SignOut(c.Request.Context(), refreshToken); err != nil {
+		respondWithError(c, http.StatusInternalServerError, "Failed to sign out")
+		return
+	}
+
+	c.SetCookie("refresh_token", "", -1, "/api", os.Getenv("DOMAIN"), false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Signed out successfully"})
 }
 
 func respondWithError(c *gin.Context, status int, message string) {

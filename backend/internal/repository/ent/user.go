@@ -30,7 +30,7 @@ func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*reposi
 	}
 
 	return &repository.User{
-		ID:           user.Ulid,
+		ID:           user.ID,
 		Email:        user.Email,
 		Name:         user.Name,
 		PasswordHash: user.PasswordHash,
@@ -47,8 +47,8 @@ func (r *UserRepository) EmailExists(ctx context.Context, email string) (bool, e
 	return isExist, nil
 }
 
-func (r *UserRepository) GetByUlid(ctx context.Context, id string) (*repository.User, error) {
-	user, err := r.client.Users.Query().Where(users.UlidEQ(id)).First(ctx)
+func (r *UserRepository) GetByID(ctx context.Context, id string) (*repository.User, error) {
+	user, err := r.client.Users.Query().Where(users.IDEQ(id)).First(ctx)
 
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -58,7 +58,7 @@ func (r *UserRepository) GetByUlid(ctx context.Context, id string) (*repository.
 	}
 
 	return &repository.User{
-		ID:    user.Ulid,
+		ID:    user.ID,
 		Email: user.Email,
 		Name:  user.Name,
 	}, nil
@@ -77,7 +77,6 @@ func (r *UserRepository) Create(ctx context.Context, user *repository.User) erro
 	}()
 
 	_, err = tx.Users.Create().
-		SetUlid(user.ID).
 		SetEmail(user.Email).
 		SetName(user.Name).
 		SetPasswordHash(user.PasswordHash).

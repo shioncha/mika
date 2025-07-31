@@ -12,6 +12,7 @@ import (
 	"github.com/shioncha/mika/backend/internal/handler"
 	"github.com/shioncha/mika/backend/internal/middleware"
 	ent "github.com/shioncha/mika/backend/internal/repository/ent"
+	redis "github.com/shioncha/mika/backend/internal/repository/redis"
 	"github.com/shioncha/mika/backend/internal/router"
 	"github.com/shioncha/mika/backend/internal/service"
 )
@@ -27,10 +28,13 @@ func newApp() (*App, error) {
 		return nil, err
 	}
 
+	redisClient := database.NewRedisClient()
+	sessionRepo := redis.NewSessionRepository(redisClient)
+
 	client := database.SetupClient()
 
 	userRepo := ent.NewUserRepository(client)
-	authService := service.NewAuthService(userRepo, publicKey, privateKey)
+	authService := service.NewAuthService(userRepo, sessionRepo, publicKey, privateKey)
 	authHandler := handler.NewAuthHandler(authService)
 
 	postRepo := ent.NewPostRepository(client)
@@ -47,6 +51,7 @@ func newApp() (*App, error) {
 
 	cleanupFunc := func() {
 		database.CloseClient(client)
+		database.CloseRedisClient(redisClient)
 	}
 
 	return &App{

@@ -19,13 +19,13 @@ func NewPostHandler(postService *service.PostService) *PostHandler {
 
 func (h *PostHandler) GetPosts(c *gin.Context) {
 	uid, _ := c.Get("user_id")
-	uidStr, ok := uid.(string)
+	userID, ok := uid.(string)
 	if !ok {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	res, err := h.postService.GetPosts(c.Request.Context(), uidStr)
+	res, err := h.postService.GetPosts(c.Request.Context(), userID)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
@@ -35,16 +35,16 @@ func (h *PostHandler) GetPosts(c *gin.Context) {
 }
 
 func (h *PostHandler) GetPost(c *gin.Context) {
-	id := c.Param("id")
+	postID := c.Param("id")
 
 	uid, _ := c.Get("user_id")
-	uidStr, ok := uid.(string)
+	userID, ok := uid.(string)
 	if !ok {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	res, err := h.postService.GetPost(c.Request.Context(), uidStr, id)
+	res, err := h.postService.GetPost(c.Request.Context(), userID, postID)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
@@ -65,13 +65,13 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 	}
 
 	uid, _ := c.Get("user_id")
-	uidStr, ok := uid.(string)
+	userID, ok := uid.(string)
 	if !ok {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	err := h.postService.CreatePost(c.Request.Context(), uidStr, req.Content)
+	err := h.postService.CreatePost(c.Request.Context(), userID, req.Content)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
@@ -81,16 +81,16 @@ func (h *PostHandler) CreatePost(c *gin.Context) {
 }
 
 func (h *PostHandler) DeletePost(c *gin.Context) {
-	id := c.Param("id")
+	postID := c.Param("id")
 
 	uid, _ := c.Get("user_id")
-	uidStr, ok := uid.(string)
+	userID, ok := uid.(string)
 	if !ok {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	err := h.postService.DeletePost(c.Request.Context(), uidStr, id)
+	err := h.postService.DeletePost(c.Request.Context(), userID, postID)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return

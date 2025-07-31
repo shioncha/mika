@@ -16,8 +16,8 @@ type UserRepository interface {
 	// メールアドレスが存在確認
 	EmailExists(ctx context.Context, email string) (bool, error)
 
-	// ユーザーULIDからユーザーを検索
-	GetByUlid(ctx context.Context, id string) (*User, error)
+	// ユーザーIDからユーザーを検索
+	GetByID(ctx context.Context, id string) (*User, error)
 
 	// 新規ユーザーを作成
 	Create(ctx context.Context, user *User) error

@@ -16,12 +16,7 @@ func NewTagService(tagRepo repository.TagRepository) *TagService {
 	}
 }
 
-func (s *TagService) GetTags(ctx context.Context, userUlid string) ([]*repository.Tag, error) {
-	userID, err := s.tagRepo.GetUserIDByUlid(ctx, userUlid)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *TagService) GetTags(ctx context.Context, userID string) ([]*repository.Tag, error) {
 	tags, err := s.tagRepo.GetTags(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -29,12 +24,7 @@ func (s *TagService) GetTags(ctx context.Context, userUlid string) ([]*repositor
 	return tags, nil
 }
 
-func (s *TagService) GetPostsByTag(ctx context.Context, userUlid string, tagID string) ([]*repository.Post, error) {
-	userID, err := s.tagRepo.GetUserIDByUlid(ctx, userUlid)
-	if err != nil {
-		return nil, err
-	}
-
+func (s *TagService) GetPostsByTag(ctx context.Context, userID string, tagID string) ([]*repository.Post, error) {
 	posts, err := s.tagRepo.GetPostsByTag(ctx, userID, tagID)
 	if err != nil {
 		return nil, err

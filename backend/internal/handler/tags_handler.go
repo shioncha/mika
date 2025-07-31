@@ -19,13 +19,13 @@ func NewTagHandler(tagService *service.TagService) *TagHandler {
 
 func (h *TagHandler) GetTags(c *gin.Context) {
 	uid, _ := c.Get("user_id")
-	uidStr, ok := uid.(string)
+	userID, ok := uid.(string)
 	if !ok {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	res, err := h.tagService.GetTags(c.Request.Context(), uidStr)
+	res, err := h.tagService.GetTags(c.Request.Context(), userID)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
@@ -36,7 +36,7 @@ func (h *TagHandler) GetTags(c *gin.Context) {
 
 func (h *TagHandler) GetPostsByTag(c *gin.Context) {
 	uid, _ := c.Get("user_id")
-	uidStr, ok := uid.(string)
+	userID, ok := uid.(string)
 	if !ok {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
@@ -48,7 +48,7 @@ func (h *TagHandler) GetPostsByTag(c *gin.Context) {
 		return
 	}
 
-	res, err := h.tagService.GetPostsByTag(c.Request.Context(), uidStr, tag)
+	res, err := h.tagService.GetPostsByTag(c.Request.Context(), userID, tag)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return

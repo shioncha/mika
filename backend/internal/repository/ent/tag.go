@@ -6,7 +6,6 @@ import (
 	"github.com/shioncha/mika/backend/ent"
 	"github.com/shioncha/mika/backend/ent/posts"
 	"github.com/shioncha/mika/backend/ent/tags"
-	"github.com/shioncha/mika/backend/ent/users"
 	"github.com/shioncha/mika/backend/internal/repository"
 )
 
@@ -20,7 +19,7 @@ func NewTagRepository(client *ent.Client) *TagRepository {
 	}
 }
 
-func (r *TagRepository) GetTags(ctx context.Context, userID int) ([]*repository.Tag, error) {
+func (r *TagRepository) GetTags(ctx context.Context, userID string) ([]*repository.Tag, error) {
 	tags, err := r.client.Tags.Query().
 		Where(tags.UserID(userID)).
 		All(ctx)
@@ -30,14 +29,14 @@ func (r *TagRepository) GetTags(ctx context.Context, userID int) ([]*repository.
 	var tagList []*repository.Tag
 	for _, tag := range tags {
 		tagList = append(tagList, &repository.Tag{
-			ID:   tag.Ulid,
+			ID:   tag.ID,
 			Name: tag.Tag,
 		})
 	}
 	return tagList, nil
 }
 
-func (r *TagRepository) GetPostsByTag(ctx context.Context, userID int, tag string) ([]*repository.Post, error) {
+func (r *TagRepository) GetPostsByTag(ctx context.Context, userID string, tag string) ([]*repository.Post, error) {
 	posts, err := r.client.Posts.Query().
 		Where(posts.UserIDEQ(userID), posts.HasTagsWith(tags.Tag(tag))).
 		All(ctx)
@@ -47,21 +46,11 @@ func (r *TagRepository) GetPostsByTag(ctx context.Context, userID int, tag strin
 	var postList []*repository.Post
 	for _, post := range posts {
 		postList = append(postList, &repository.Post{
-			ID:        post.Ulid,
+			ID:        post.ID,
 			Content:   post.Content,
 			CreatedAt: post.CreatedAt.String(),
 			UpdatedAt: post.UpdatedAt.String(),
 		})
 	}
 	return postList, nil
-}
-
-func (r *TagRepository) GetUserIDByUlid(ctx context.Context, ulid string) (int, error) {
-	user, err := r.client.Users.Query().
-		Where(users.UlidEQ(ulid)).
-		First(ctx)
-	if err != nil {
-		return 0, err
-	}
-	return user.ID, nil
 }

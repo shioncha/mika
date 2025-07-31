@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { AuthContext } from "../../../hooks/auth_context";
-import { PostsAPI, TagsPostsAPI } from "../../../libs/api";
+import { postService, tagService } from "../../../libs/ContentService";
 import { formatDate, groupByDate, localDate } from "../../../libs/datetime";
 import type { Post } from "../../../type/post";
 import List from "../List";
@@ -21,21 +20,17 @@ function TimelineComponent({
   setFadeout,
   onlyUnchecked,
 }: TimelineProps) {
-  const { token } = useContext(AuthContext);
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     setFadeout(false);
     setPosts([]);
-    if (token == null) {
-      return;
-    }
     if (!tag) {
-      PostsAPI({ method: "GET", token, setPosts });
+      postService.fetchPosts().then(setPosts);
       return;
     }
-    TagsPostsAPI({ method: "GET", tag, token, setPosts });
-  }, [token, tag, setFadeout]);
+    tagService.fetchPostsByTag(tag).then(setPosts);
+  }, [tag, setFadeout]);
 
   const groupedPosts = groupByDate(posts);
   const sortedDates = Object.keys(groupedPosts).sort(

@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/oklog/ulid/v2"
 )
 
 // Tags holds the schema definition for the Tags entity.
@@ -16,11 +17,16 @@ type Tags struct {
 // Fields of the Tags.
 func (Tags) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("id"),
-		field.String("ulid").
-			NotEmpty().
+		field.String("id").
+			MaxLen(26).
+			DefaultFunc(func() string {
+				return ulid.Make().String()
+			}).
+			Immutable().
 			Unique(),
-		field.Int("user_id"),
+		field.String("user_id").
+			MaxLen(26).
+			NotEmpty(),
 		field.String("tag").
 			NotEmpty(),
 		field.Time("created_at").

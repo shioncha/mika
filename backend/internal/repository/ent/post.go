@@ -7,9 +7,7 @@ import (
 	"github.com/shioncha/mika/backend/ent"
 	"github.com/shioncha/mika/backend/ent/posts"
 	"github.com/shioncha/mika/backend/ent/tags"
-	"github.com/shioncha/mika/backend/ent/users"
 	"github.com/shioncha/mika/backend/internal/repository"
-	"github.com/shioncha/mika/backend/internal/utils"
 )
 
 type PostRepository struct {
@@ -22,7 +20,7 @@ func NewPostRepository(client *ent.Client) *PostRepository {
 	}
 }
 
-func (r *PostRepository) GetPostsByUserID(ctx context.Context, userID int) ([]*repository.Post, error) {
+func (r *PostRepository) GetPostsByUserID(ctx context.Context, userID string) ([]*repository.Post, error) {
 	postList, err := r.client.Posts.Query().Where(posts.UserIDEQ(userID)).All(ctx)
 	if err != nil {
 		return nil, err
@@ -31,7 +29,7 @@ func (r *PostRepository) GetPostsByUserID(ctx context.Context, userID int) ([]*r
 	var posts []*repository.Post
 	for _, post := range postList {
 		posts = append(posts, &repository.Post{
-			ID:        post.Ulid,
+			ID:        post.ID,
 			Content:   post.Content,
 			CreatedAt: post.CreatedAt.String(),
 			UpdatedAt: post.UpdatedAt.String(),
@@ -41,26 +39,24 @@ func (r *PostRepository) GetPostsByUserID(ctx context.Context, userID int) ([]*r
 	return posts, nil
 }
 
-func (r *PostRepository) GetPostByPostID(ctx context.Context, userID int, postID string) (*repository.Post, error) {
+func (r *PostRepository) GetPostByPostID(ctx context.Context, userID string, postID string) (*repository.Post, error) {
 	post, err := r.client.Posts.Query().
-		Where(posts.UserIDEQ(userID), posts.UlidEQ(postID)).
+		Where(posts.UserIDEQ(userID), posts.IDEQ(postID)).
 		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return &repository.Post{
-		ID:        post.Ulid,
+		ID:        post.ID,
 		Content:   post.Content,
 		CreatedAt: post.CreatedAt.String(),
 		UpdatedAt: post.UpdatedAt.String(),
 	}, nil
 }
 
-func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID int, content string, tags []int) error {
-	id := utils.GenerateULID()
+func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID string, content string, tags []string) error {
 	_, err := tx.Posts.Create().
-		SetUlid(id).
 		SetUserID(userID).
 		SetContent(content).
 		AddTagIDs(tags...).
@@ -71,9 +67,9 @@ func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID int,
 	return nil
 }
 
-func (r *PostRepository) DeletePost(ctx context.Context, userID int, postID string) error {
+func (r *PostRepository) DeletePost(ctx context.Context, userID string, postID string) error {
 	_, err := r.client.Posts.Delete().
-		Where(posts.UserIDEQ(userID), posts.UlidEQ(postID)).
+		Where(posts.UserIDEQ(userID), posts.IDEQ(postID)).
 		Exec(ctx)
 	if err != nil {
 		return err
@@ -81,36 +77,30 @@ func (r *PostRepository) DeletePost(ctx context.Context, userID int, postID stri
 	return nil
 }
 
-func (r *PostRepository) GetUserIDByUlid(ctx context.Context, ulid string) (int, error) {
-	user, err := r.client.Users.Query().
-		Where(users.UlidEQ(ulid)).
-		First(ctx)
-	if err != nil {
-		return 0, err
-	}
-	return user.ID, nil
-}
+func (r *PostRepository) CreateTags(ctx context.Context, tx *ent.Tx, userID string, tagList []string) ([]string, error) {
+	var tagIDs []string
 
-func (r *PostRepository) CreateTags(ctx context.Context, tx *ent.Tx, userID int, tagList []string) ([]int, error) {
-	var tagIDs []int
+	existingTags, err := tx.Tags.Query().
+		Where(tags.UserIDEQ(userID), tags.TagIn(tagList...)).
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query existing tags: %w", err)
+	}
+
+	existingTagMap := make(map[string]string)
+	for _, tag := range existingTags {
+		existingTagMap[tag.Tag] = tag.ID
+	}
 
 	for _, tag := range tagList {
-		existingTag, err := tx.Tags.Query().
-			Where(tags.UserIDEQ(userID), tags.TagEQ(tag)).
-			First(ctx)
-		if err != nil && !ent.IsNotFound(err) {
-			return nil, fmt.Errorf("failed to check tag existence")
-		}
-		if existingTag != nil {
-			tagIDs = append(tagIDs, existingTag.ID)
+		if id, ok := existingTagMap[tag]; ok {
+			tagIDs = append(tagIDs, id)
 			continue
 		}
 
-		tagUlid := utils.GenerateULID()
 		res, err := tx.Tags.Create().
 			SetTag(tag).
 			SetUserID(userID).
-			SetUlid(tagUlid).
 			Save(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create tag")

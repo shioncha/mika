@@ -1,3 +1,5 @@
+import Button from "../../components/elements/Button";
+import InputText from "../../components/elements/InputText";
 import apiClient from "../../libs/api";
 
 function EmailPage() {
@@ -21,9 +23,9 @@ function EmailPage() {
       <h1>Change Email</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" required />
-          <button type="submit">Update Email Address</button>
+          <label htmlFor="email">New Email</label>
+          <InputText type="email" id="email" name="email" required />
+          <Button type="submit">Update Email Address</Button>
         </div>
       </form>
     </div>

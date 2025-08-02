@@ -21,7 +21,7 @@ function SettingsPage() {
           {user?.email || "-"}
         </ListElementSetting>
         <ListElementSetting to="password" name="Password">
-          -
+          ********
         </ListElementSetting>
       </List>
       <List className={style.list}>

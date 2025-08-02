@@ -1,3 +1,5 @@
+import Button from "../../components/elements/Button";
+import InputText from "../../components/elements/InputText";
 import apiClient from "../../libs/api";
 
 function UsernamePage() {
@@ -18,12 +20,12 @@ function UsernamePage() {
 
   return (
     <div>
-      <h1>Change Username</h1>
+      <h1>Change Name</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name">Username:</label>
-          <input type="text" id="name" name="name" required />
-          <button type="submit">Update Username</button>
+          <label htmlFor="name">New Name</label>
+          <InputText type="text" id="name" name="name" required />
+          <Button type="submit">Update Name</Button>
         </div>
       </form>
     </div>

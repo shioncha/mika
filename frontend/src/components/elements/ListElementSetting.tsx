@@ -1,3 +1,4 @@
+import { FaChevronRight } from "react-icons/fa6";
 import { Link } from "react-router";
 
 import style from "../../styles/components/elements/ListElementSetting.module.css";
@@ -5,13 +6,19 @@ import style from "../../styles/components/elements/ListElementSetting.module.cs
 interface ListElementSettingProps
   extends React.HTMLAttributes<HTMLAnchorElement> {
   to: string;
+  name: string;
 }
 
-function ListElementSetting({ children, to }: ListElementSettingProps) {
+function ListElementSetting({ children, to, name }: ListElementSettingProps) {
   return (
-    <Link className={style.item} to={`/settings/${to}`}>
-      {children}
-    </Link>
+    <div className={style.item}>
+      <Link className={style.link} to={`/settings/${to}`}></Link>
+      <div className={style.content}>
+        <span>{name}</span>
+        <span className={style.value}>{children}</span>
+      </div>
+      <FaChevronRight className={style.arrow} />
+    </div>
   );
 }
 

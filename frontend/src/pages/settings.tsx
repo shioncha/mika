@@ -14,9 +14,15 @@ function SettingsPage() {
     <>
       <p className={style.name}>Hello, {user?.name}!</p>
       <List className={style.list}>
-        <ListElementSetting to="name">Change Name</ListElementSetting>
-        <ListElementSetting to="email">Change Email</ListElementSetting>
-        <ListElementSetting to="password">Change Password</ListElementSetting>
+        <ListElementSetting to="name" name="Name">
+          {user?.name || "-"}
+        </ListElementSetting>
+        <ListElementSetting to="email" name="Email">
+          {user?.email || "-"}
+        </ListElementSetting>
+        <ListElementSetting to="password" name="Password">
+          -
+        </ListElementSetting>
       </List>
       <List className={style.list}>
         <button
@@ -29,7 +35,7 @@ function SettingsPage() {
         </button>
       </List>
       <List className={style.list}>
-        <ListElementSetting to="about">About Mika</ListElementSetting>
+        <ListElementSetting to="about" name="About Mika"></ListElementSetting>
       </List>
     </>
   );

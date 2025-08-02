@@ -56,14 +56,30 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.userService.UpdateUsername(c.Request.Context(), userID, req.Name); err != nil {
-		respondWithError(c, http.StatusInternalServerError, "Failed to update username")
+	if req.Name == "" && req.Email == "" && req.Password == "" {
+		respondWithError(c, http.StatusBadRequest, "No fields to update")
 		return
 	}
 
-	if err := h.userService.UpdateEmail(c.Request.Context(), userID, req.Email); err != nil {
-		respondWithError(c, http.StatusInternalServerError, "Failed to update email")
-		return
+	if req.Name != "" {
+		if err := h.userService.UpdateUsername(c.Request.Context(), userID, req.Name); err != nil {
+			respondWithError(c, http.StatusInternalServerError, "Failed to update username")
+			return
+		}
+	}
+
+	if req.Email != "" {
+		if err := h.userService.UpdateEmail(c.Request.Context(), userID, req.Email); err != nil {
+			respondWithError(c, http.StatusInternalServerError, "Failed to update email")
+			return
+		}
+	}
+
+	if req.Password != "" {
+		if err := h.userService.UpdatePassword(c.Request.Context(), userID, req.Password); err != nil {
+			respondWithError(c, http.StatusInternalServerError, "Failed to update password")
+			return
+		}
 	}
 
 	c.JSON(200, gin.H{"message": "User updated successfully"})

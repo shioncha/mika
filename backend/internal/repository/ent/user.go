@@ -6,7 +6,6 @@ import (
 
 	"github.com/shioncha/mika/backend/ent"
 	"github.com/shioncha/mika/backend/ent/users"
-	"github.com/shioncha/mika/backend/internal/auth"
 	"github.com/shioncha/mika/backend/internal/repository"
 )
 
@@ -127,13 +126,7 @@ func (r *UserRepository) UpdatePassword(ctx context.Context, id string, newPassw
 		}
 	}()
 
-	hashedPassword, err := auth.GenerateHashedPassword(newPassword)
-	if err != nil {
-		tx.Rollback()
-		return fmt.Errorf("failed to hash password: %w", err)
-	}
-
-	err = tx.Users.UpdateOneID(id).SetPasswordHash(hashedPassword).Exec(ctx)
+	err = tx.Users.UpdateOneID(id).SetPasswordHash(newPassword).Exec(ctx)
 	if err != nil {
 		tx.Rollback()
 		return fmt.Errorf("failed to update password: %w", err)

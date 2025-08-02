@@ -6,6 +6,7 @@ import (
 
 	"github.com/shioncha/mika/backend/ent"
 	"github.com/shioncha/mika/backend/ent/users"
+	"github.com/shioncha/mika/backend/internal/auth"
 	"github.com/shioncha/mika/backend/internal/repository"
 )
 
@@ -64,7 +65,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id string) (*repository.Us
 	}, nil
 }
 
-func (r *UserRepository) Create(ctx context.Context, user *repository.User) error {
+func (r *UserRepository) UpdateUsername(ctx context.Context, id string, name string) error {
 	tx, err := r.client.Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to start transaction: %w", err)
@@ -76,14 +77,66 @@ func (r *UserRepository) Create(ctx context.Context, user *repository.User) erro
 		}
 	}()
 
-	_, err = tx.Users.Create().
-		SetEmail(user.Email).
-		SetName(user.Name).
-		SetPasswordHash(user.PasswordHash).
-		Save(ctx)
+	err = tx.Users.UpdateOneID(id).SetName(name).Exec(ctx)
 	if err != nil {
 		tx.Rollback()
-		return fmt.Errorf("failed to create user: %w", err)
+		return fmt.Errorf("failed to update username: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
+
+func (r *UserRepository) UpdateEmail(ctx context.Context, id string, email string) error {
+	tx, err := r.client.Tx(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	err = tx.Users.UpdateOneID(id).SetEmail(email).Exec(ctx)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("failed to update email: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
+
+func (r *UserRepository) UpdatePassword(ctx context.Context, id string, newPassword string) error {
+	tx, err := r.client.Tx(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	hashedPassword, err := auth.GenerateHashedPassword(newPassword)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	err = tx.Users.UpdateOneID(id).SetPasswordHash(hashedPassword).Exec(ctx)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("failed to update password: %w", err)
 	}
 
 	if err := tx.Commit(); err != nil {

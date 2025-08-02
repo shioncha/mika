@@ -60,8 +60,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteNoneMode)
-	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", os.Getenv("DOMAIN"), false, true)
+	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", "", false, true)
 
 	c.JSON(http.StatusOK, AuthResponse{
 		Token: res.Token,
@@ -91,8 +90,7 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	c.SetSameSite(http.SameSiteNoneMode)
-	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", os.Getenv("DOMAIN"), false, true)
+	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", "", false, true)
 
 	c.JSON(http.StatusOK, AuthResponse{
 		Token: res.Token,

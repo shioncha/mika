@@ -33,10 +33,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         const response = await apiClient.post("/refresh-token", {
           withCredentials: true,
         });
-        setAccessToken(response.data.access_token);
-        apiClient.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.data.access_token}`;
+        signIn(response.data.token);
       } catch {
         console.log("No active session found.");
         setAccessToken(null);
@@ -110,7 +107,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{ isAuthenticated, isLoading, signIn, signOut }}
     >
-      {children}
+      {isLoading ? <p>Loading application...</p> : children}
     </AuthContext.Provider>
   );
 }

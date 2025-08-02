@@ -14,13 +14,9 @@ function SettingsPage() {
     <>
       <p className={style.name}>Hello, {user?.name}!</p>
       <List className={style.list}>
-        <ListElementSetting to="/settings/name">Change Name</ListElementSetting>
-        <ListElementSetting to="/settings/email">
-          Change Email
-        </ListElementSetting>
-        <ListElementSetting to="/settings/password">
-          Change Password
-        </ListElementSetting>
+        <ListElementSetting to="name">Change Name</ListElementSetting>
+        <ListElementSetting to="email">Change Email</ListElementSetting>
+        <ListElementSetting to="password">Change Password</ListElementSetting>
       </List>
       <List className={style.list}>
         <button
@@ -33,7 +29,7 @@ function SettingsPage() {
         </button>
       </List>
       <List className={style.list}>
-        <ListElementSetting to="/settings/about">About Mika</ListElementSetting>
+        <ListElementSetting to="about">About Mika</ListElementSetting>
       </List>
     </>
   );

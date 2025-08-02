@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from "react-router";
 
 import Modal from "../components/elements/modal";
+import SettingsLayout from "../components/layouts/Settings";
 import TimelineLayout from "../components/layouts/timeline";
 import { useAuth } from "../hooks/auth_context";
 import Base from "../layouts/Base";
@@ -32,10 +33,12 @@ function AppRoutes() {
         <Route element={<PrivateRoute />}>
           <Route path="/new" element={<NewPage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/settings/name" element={<UsernamePage />} />
-          <Route path="/settings/email" element={<EmailPage />} />
-          <Route path="/settings/password" element={<PasswordPage />} />
-          <Route path="/settings/about" element={<AboutPage />} />
+          <Route path="/settings" element={<SettingsLayout />}>
+            <Route path="name" element={<UsernamePage />} />
+            <Route path="email" element={<EmailPage />} />
+            <Route path="password" element={<PasswordPage />} />
+            <Route path="about" element={<AboutPage />} />
+          </Route>
           <Route path="/tags/:tag" element={<TimelineLayout />} />
         </Route>
         <Route element={<PublicRoute />}>

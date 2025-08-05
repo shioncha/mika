@@ -76,7 +76,7 @@ func (r *AuthRepository) Create(ctx context.Context, user *repository.User) erro
 		}
 	}()
 
-	_, err = tx.Users.Create().
+	created, err := tx.Users.Create().
 		SetEmail(user.Email).
 		SetName(user.Name).
 		SetPasswordHash(user.PasswordHash).
@@ -85,6 +85,7 @@ func (r *AuthRepository) Create(ctx context.Context, user *repository.User) erro
 		tx.Rollback()
 		return fmt.Errorf("failed to create user: %w", err)
 	}
+	user.ID = created.ID
 
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("failed to commit transaction: %w", err)

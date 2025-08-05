@@ -7,13 +7,13 @@ function UsernamePage() {
     event.preventDefault();
     apiClient
       .patch("/account", {
-        name: event.currentTarget.name.value,
+        name: (event.target as HTMLFormElement).name.valueOf(),
       })
       .then(() => {
         alert("Username updated successfully!");
       })
-      .catch((error) => {
-        console.error("Error updating username:", error);
+      .catch(() => {
+        console.error("Error updating username:");
         alert("Failed to update username. Please try again.");
       });
   };

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { postService } from "../libs/api";
-import { Post } from "../type/post";
+import { postService } from "../libs/ContentService";
+import type { Post } from "../type/post";
 
 export function useInfinitePosts() {
   const [posts, setPosts] = useState<Post[]>([]);

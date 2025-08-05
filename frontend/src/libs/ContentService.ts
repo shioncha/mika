@@ -3,15 +3,28 @@ import type { Tag } from "../type/tag";
 import type { User } from "../type/user";
 import apiClient from "./api";
 
+interface PostResponse {
+  next_cursor: string;
+  posts: Post[];
+}
+
 // Posts関連のAPIサービス
 export const postService = {
   /**
    * すべての投稿を取得
+   * @param limit 取得する投稿の数
+   * @param cursor ページネーション用のカーソル
    */
-  async fetchPosts(): Promise<Post[]> {
-    // apiClientを使い、GETリクエストを送信
-    // AuthorizationヘッダーなどはapiClientが自動で付与します
-    const { data } = await apiClient.get<Post[]>("/posts");
+  async fetchPosts(limit: number, cursor?: string): Promise<PostResponse> {
+    const params = new URLSearchParams();
+    params.append("limit", String(limit));
+    if (cursor) {
+      params.append("cursor", cursor);
+    }
+
+    const { data } = await apiClient.get<PostResponse>(
+      `/posts?${params.toString()}`
+    );
     return data;
   },
 
@@ -63,11 +76,25 @@ export const tagService = {
   },
 
   /**
-   * 指定したタグを持つすべての投稿を取得
+   * 指定したタグを持つ投稿を取得
    * @param tagName タグ名
+   * @param limit 取得する投稿の数
+   * @param cursor ページネーション用のカーソル
    */
-  async fetchPostsByTag(tagName: string): Promise<Post[]> {
-    const { data } = await apiClient.get<Post[]>(`/tags/${tagName}/posts`);
+  async fetchPostsByTag(
+    tagName: string,
+    limit: number,
+    cursor?: string
+  ): Promise<PostResponse> {
+    const params = new URLSearchParams();
+    params.append("limit", String(limit));
+    if (cursor) {
+      params.append("cursor", cursor);
+    }
+
+    const { data } = await apiClient.get<PostResponse>(
+      `/tags/${tagName}/posts?${params.toString()}`
+    );
     return data;
   },
 };

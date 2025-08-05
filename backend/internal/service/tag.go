@@ -24,10 +24,17 @@ func (s *TagService) GetTags(ctx context.Context, userID string) ([]*repository.
 	return tags, nil
 }
 
-func (s *TagService) GetPostsByTag(ctx context.Context, userID string, tagID string) ([]*repository.Post, error) {
-	posts, err := s.tagRepo.GetPostsByTag(ctx, userID, tagID)
+func (s *TagService) GetPostsByTag(ctx context.Context, userID string, tagID string, limit int, cursor string) ([]*repository.Post, string, error) {
+	posts, err := s.tagRepo.GetPostsByTag(ctx, userID, tagID, limit+1, cursor)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	return posts, nil
+
+	nextCursor := ""
+	if len(posts) > limit {
+		nextCursor = posts[len(posts)-1].ID
+		posts = posts[:limit]
+	}
+
+	return posts, nextCursor, nil
 }

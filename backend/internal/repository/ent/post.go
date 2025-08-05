@@ -20,8 +20,12 @@ func NewPostRepository(client *ent.Client) *PostRepository {
 	}
 }
 
-func (r *PostRepository) GetPostsByUserID(ctx context.Context, userID string) ([]*repository.Post, error) {
-	postList, err := r.client.Posts.Query().Where(posts.UserIDEQ(userID)).All(ctx)
+func (r *PostRepository) GetPostsByUserID(ctx context.Context, userID string, limit int, cursor string) ([]*repository.Post, error) {
+	query := r.client.Posts.Query().Order(ent.Desc(posts.FieldCreatedAt)).Where(posts.UserIDEQ(userID))
+	if cursor != "" {
+		query = query.Where(posts.IDLT(cursor))
+	}
+	postList, err := query.Limit(limit).All(ctx)
 	if err != nil {
 		return nil, err
 	}

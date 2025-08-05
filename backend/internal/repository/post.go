@@ -15,7 +15,7 @@ type Post struct {
 
 type PostRepository interface {
 	// ユーザーの投稿一覧を取得
-	GetPostsByUserID(ctx context.Context, userID string) ([]*Post, error)
+	GetPostsByUserID(ctx context.Context, userID string, limit int, cursor string) ([]*Post, error)
 
 	// 投稿を取得
 	GetPostByPostID(ctx context.Context, userID string, postID string) (*Post, error)

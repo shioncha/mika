@@ -12,5 +12,5 @@ type TagRepository interface {
 	GetTags(ctx context.Context, userID string) ([]*Tag, error)
 
 	// タグからポストを取得
-	GetPostsByTag(ctx context.Context, userID string, tag string) ([]*Post, error)
+	GetPostsByTag(ctx context.Context, userID string, tag string, limit int, cursor string) ([]*Post, error)
 }

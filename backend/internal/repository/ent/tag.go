@@ -36,10 +36,12 @@ func (r *TagRepository) GetTags(ctx context.Context, userID string) ([]*reposito
 	return tagList, nil
 }
 
-func (r *TagRepository) GetPostsByTag(ctx context.Context, userID string, tag string) ([]*repository.Post, error) {
-	posts, err := r.client.Posts.Query().
-		Where(posts.UserIDEQ(userID), posts.HasTagsWith(tags.Tag(tag))).
-		All(ctx)
+func (r *TagRepository) GetPostsByTag(ctx context.Context, userID string, tag string, limit int, cursor string) ([]*repository.Post, error) {
+	query := r.client.Posts.Query().Order(ent.Desc(posts.FieldCreatedAt)).Where(posts.UserIDEQ(userID), posts.HasTagsWith(tags.Tag(tag)))
+	if cursor != "" {
+		query = query.Where(posts.IDLT(cursor))
+	}
+	posts, err := query.Limit(limit).All(ctx)
 	if err != nil {
 		return nil, err
 	}

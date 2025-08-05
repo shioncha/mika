@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/shioncha/mika/backend/internal/service"
@@ -48,11 +49,24 @@ func (h *TagHandler) GetPostsByTag(c *gin.Context) {
 		return
 	}
 
-	res, err := h.tagService.GetPostsByTag(c.Request.Context(), userID, tag)
+	limitStr := c.DefaultQuery("limit", "20")
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 || limit > 100 {
+		limit = 20
+	}
+
+	cursor := c.Query("cursor")
+
+	res, nextCursor, err := h.tagService.GetPostsByTag(c.Request.Context(), userID, tag, limit, cursor)
 	if err != nil {
 		respondWithError(c, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	var response = gin.H{
+		"posts":       res,
+		"next_cursor": nextCursor,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

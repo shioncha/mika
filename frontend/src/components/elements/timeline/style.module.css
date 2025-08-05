@@ -1,9 +1,8 @@
 .date {
-  background-color: #eee;
   border-radius: calc(6.4px + 0.8rem);
+  color: #757575;
   display: block;
   font-size: 0.8rem;
-  font-weight: 600;
   line-height: 0.8rem;
   margin: 24px auto 0;
   padding: 6.4px 12.8px;
@@ -13,6 +12,13 @@
 
 .posts {
   margin: 12px 0 0;
+}
+
+.loading,
+.noPosts {
+  color: #757575;
+  margin: 16px 0;
+  text-align: center;
 }
 
 .animation {

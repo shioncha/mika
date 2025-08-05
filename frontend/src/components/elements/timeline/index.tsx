@@ -37,7 +37,7 @@ function TimelineComponent({
           : await postService.fetchPosts(20);
 
         if (!ignore) {
-          setPosts(response.posts);
+          setPosts(response.posts || []);
           if (response.next_cursor) {
             setNextCursor(response.next_cursor);
             setHasMore(true);
@@ -75,7 +75,10 @@ function TimelineComponent({
         ? await tagService.fetchPostsByTag(tag, 20, nextCursor)
         : await postService.fetchPosts(20, nextCursor);
 
-      setPosts((prevPosts: Post[]) => [...prevPosts, ...response.posts]);
+      const newPosts = response.posts || [];
+      if (newPosts.length > 0) {
+        setPosts((prevPosts: Post[]) => [...prevPosts, ...newPosts]);
+      }
 
       if (response.next_cursor) {
         setNextCursor(response.next_cursor);

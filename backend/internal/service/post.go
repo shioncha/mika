@@ -20,12 +20,19 @@ func NewPostService(client *ent.Client, postRepo repository.PostRepository) *Pos
 	}
 }
 
-func (s *PostService) GetPosts(ctx context.Context, userID string) ([]*repository.Post, error) {
-	posts, err := s.postRepo.GetPostsByUserID(ctx, userID)
+func (s *PostService) GetPosts(ctx context.Context, userID string, limit int, cursor string) ([]*repository.Post, string, error) {
+	posts, err := s.postRepo.GetPostsByUserID(ctx, userID, limit+1, cursor)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	return posts, nil
+
+	nextCursor := ""
+	if len(posts) > limit {
+		nextCursor = posts[len(posts)-1].ID
+		posts = posts[:limit]
+	}
+
+	return posts, nextCursor, nil
 }
 
 func (s *PostService) GetPost(ctx context.Context, userID string, postID string) (*repository.Post, error) {

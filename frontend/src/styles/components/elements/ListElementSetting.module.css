@@ -1,0 +1,46 @@
+.item {
+  align-items: center;
+  color: inherit;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 24px;
+  position: relative;
+}
+.item:not(:last-child) {
+  border-bottom: 1px solid #e0e0e0;
+}
+.item:hover {
+  background-color: #e9e9e9;
+  text-decoration: none;
+}
+.item:hover:first-child {
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+}
+.item:hover:last-child {
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+
+.link {
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.value {
+  color: #757575;
+}
+
+.arrow {
+  color: #555;
+}

@@ -19,6 +19,12 @@ type UserRepository interface {
 	// ユーザーIDからユーザーを検索
 	GetByID(ctx context.Context, id string) (*User, error)
 
-	// 新規ユーザーを作成
-	Create(ctx context.Context, user *User) error
+	// ユーザー名を更新
+	UpdateUsername(ctx context.Context, id string, name string) error
+
+	// メールアドレスを更新
+	UpdateEmail(ctx context.Context, id string, email string) error
+
+	// パスワードを変更
+	UpdatePassword(ctx context.Context, id string, newPassword string) error
 }

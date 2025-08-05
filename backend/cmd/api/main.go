@@ -33,8 +33,8 @@ func newApp() (*App, error) {
 
 	client := database.SetupClient()
 
-	userRepo := ent.NewUserRepository(client)
-	authService := service.NewAuthService(userRepo, sessionRepo, publicKey, privateKey)
+	authRepo := ent.NewAuthRepository(client)
+	authService := service.NewAuthService(authRepo, sessionRepo, publicKey, privateKey)
 	authHandler := handler.NewAuthHandler(authService)
 
 	postRepo := ent.NewPostRepository(client)
@@ -45,9 +45,13 @@ func newApp() (*App, error) {
 	tagService := service.NewTagService(tagRepo)
 	tagHandler := handler.NewTagHandler(tagService)
 
+	userRepo := ent.NewUserRepository(client)
+	userService := service.NewUserService(userRepo, sessionRepo, publicKey, privateKey)
+	userHandler := handler.NewUserHandler(userService)
+
 	authMiddleware := middleware.NewAuthRequiredMiddleware(publicKey)
 
-	router := router.SetupRouter(authHandler, postHandler, tagHandler, authMiddleware)
+	router := router.SetupRouter(authHandler, postHandler, tagHandler, userHandler, authMiddleware)
 
 	cleanupFunc := func() {
 		database.CloseClient(client)

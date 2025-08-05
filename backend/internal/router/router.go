@@ -14,6 +14,7 @@ func SetupRouter(
 	ah *handler.AuthHandler,
 	ph *handler.PostHandler,
 	th *handler.TagHandler,
+	uh *handler.UserHandler,
 	am *middleware.AuthRequiredMiddleware,
 ) *gin.Engine {
 	router := gin.Default()
@@ -53,7 +54,7 @@ func SetupRouter(
 	{
 		userRoutes := authorized.Group("/users")
 		{
-			userRoutes.GET("/me", ah.Get)
+			userRoutes.GET("/me", uh.Get)
 		}
 
 		postRoutes := authorized.Group("/posts")
@@ -68,6 +69,10 @@ func SetupRouter(
 		{
 			tagRoutes.GET("", th.GetTags)
 			tagRoutes.GET("/:tag/posts", th.GetPostsByTag)
+		}
+
+		{
+			authorized.PATCH("/account", uh.Update)
 		}
 	}
 

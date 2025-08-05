@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/shioncha/mika/backend/internal/auth"
 	"github.com/shioncha/mika/backend/internal/database"
@@ -65,10 +64,6 @@ func newApp() (*App, error) {
 }
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("Warning: .env file not found")
-	}
-
 	app, err := newApp()
 	if err != nil {
 		log.Fatalf("Failed to initialize application: %v", err)

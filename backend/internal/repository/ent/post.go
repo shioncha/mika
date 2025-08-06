@@ -33,10 +33,12 @@ func (r *PostRepository) GetPostsByUserID(ctx context.Context, userID string, li
 	var posts []*repository.Post
 	for _, post := range postList {
 		posts = append(posts, &repository.Post{
-			ID:        post.ID,
-			Content:   post.Content,
-			CreatedAt: post.CreatedAt.String(),
-			UpdatedAt: post.UpdatedAt.String(),
+			ID:          post.ID,
+			Content:     post.Content,
+			HasCheckbox: post.HasCheckbox,
+			IsChecked:   post.IsChecked,
+			CreatedAt:   post.CreatedAt.String(),
+			UpdatedAt:   post.UpdatedAt.String(),
 		})
 	}
 
@@ -52,10 +54,12 @@ func (r *PostRepository) GetPostByPostID(ctx context.Context, userID string, pos
 	}
 
 	return &repository.Post{
-		ID:        post.ID,
-		Content:   post.Content,
-		CreatedAt: post.CreatedAt.String(),
-		UpdatedAt: post.UpdatedAt.String(),
+		ID:          post.ID,
+		Content:     post.Content,
+		HasCheckbox: post.HasCheckbox,
+		IsChecked:   post.IsChecked,
+		CreatedAt:   post.CreatedAt.String(),
+		UpdatedAt:   post.UpdatedAt.String(),
 	}, nil
 }
 
@@ -64,6 +68,37 @@ func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID stri
 		SetUserID(userID).
 		SetContent(content).
 		AddTagIDs(tags...).
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *PostRepository) UpdateContent(ctx context.Context, tx *ent.Tx, userID string, postID string, content string, tags []string) error {
+	_, err := tx.Posts.Update().
+		Where(posts.UserIDEQ(userID), posts.IDEQ(postID)).
+		SetContent(content).
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Posts.Update().
+		Where(posts.UserIDEQ(userID), posts.IDEQ(postID)).
+		ClearTags().
+		AddTagIDs(tags...).
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *PostRepository) UpdateCheckbox(ctx context.Context, userID string, postID string, isChecked bool) error {
+	_, err := r.client.Posts.Update().
+		Where(posts.UserIDEQ(userID), posts.IDEQ(postID)).
+		SetIsChecked(isChecked).
 		Save(ctx)
 	if err != nil {
 		return err

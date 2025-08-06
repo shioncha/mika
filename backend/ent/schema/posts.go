@@ -29,6 +29,10 @@ func (Posts) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("content").
 			NotEmpty(),
+		field.Bool("has_checkbox").
+			Default(false),
+		field.Bool("is_checked").
+			Default(false),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("updated_at").

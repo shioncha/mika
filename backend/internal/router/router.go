@@ -26,7 +26,7 @@ func SetupRouter(
 		AllowMethods: []string{
 			"GET",
 			"POST",
-			"PUT",
+			"PATCH",
 			"DELETE",
 		},
 		AllowHeaders: []string{
@@ -62,6 +62,7 @@ func SetupRouter(
 			postRoutes.GET("", ph.GetPosts)
 			postRoutes.POST("", ph.CreatePost)
 			postRoutes.GET("/:id", ph.GetPost)
+			postRoutes.PATCH("/:id", ph.UpdatePost)
 			postRoutes.DELETE("/:id", ph.DeletePost)
 		}
 

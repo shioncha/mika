@@ -7,10 +7,12 @@ import (
 )
 
 type Post struct {
-	ID        string
-	Content   string
-	CreatedAt string
-	UpdatedAt string
+	ID          string
+	Content     string
+	HasCheckbox bool
+	IsChecked   bool
+	CreatedAt   string
+	UpdatedAt   string
 }
 
 type PostRepository interface {
@@ -22,6 +24,12 @@ type PostRepository interface {
 
 	// 投稿を作成
 	CreatePost(ctx context.Context, tx *ent.Tx, userID string, post string, tags []string) error
+
+	// 投稿内容を更新
+	UpdateContent(ctx context.Context, tx *ent.Tx, userID string, postID string, content string, tags []string) error
+
+	// 投稿のチェックボックスを更新
+	UpdateCheckbox(ctx context.Context, userID string, postID string, isChecked bool) error
 
 	// 投稿を削除
 	DeletePost(ctx context.Context, userID string, postID string) error

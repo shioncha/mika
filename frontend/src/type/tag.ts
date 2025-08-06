@@ -1,6 +1,6 @@
 interface Tag {
-  ID: number;
+  ID: string;
   Name: string;
 }
 
-export type {Tag};
+export type { Tag };

@@ -1,6 +1,7 @@
 import DOMpurify from "dompurify";
 import { Link, useLocation } from "react-router";
 
+import { postService } from "../../libs/ContentService";
 import { formatDate, localTime } from "../../libs/datetime";
 import style from "../../styles/components/elements/ListElementPost.module.css";
 import type { Post } from "../../type/post";
@@ -37,20 +38,33 @@ const sanitizeOptions = {
 function ListElementPost({ post }: ListElementPostProps) {
   const location = useLocation();
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    postService
+      .updateCheckbox(post.ID, e.currentTarget.checked)
+      .then(() => {
+        // Optionally handle success, e.g., show a toast or update state
+      })
+      .catch(() => {
+        console.error("Failed to update checkbox state");
+      });
+  };
+
   return (
-    <Link
-      key={post.ID}
-      className={style.post}
-      to={`/posts/${post.ID}`}
-      state={{ background: location }}
-    >
+    <div className={style.post}>
+      <Link
+        key={post.ID}
+        className={style.link}
+        to={`/posts/${post.ID}`}
+        state={{ background: location }}
+      ></Link>
       <div className={style.contentContainer}>
-        {post.has_checkbox ? (
+        {post.HasCheckbox ? (
           <input
             type="checkbox"
-            defaultChecked={post.is_checked}
+            defaultChecked={post.IsChecked}
             className={style.checkbox}
-            onClick={(e) => e.stopPropagation()}
+            onChange={handleCheckboxChange}
           />
         ) : null}
         <p
@@ -68,7 +82,7 @@ function ListElementPost({ post }: ListElementPostProps) {
       <span className={style.time} onClick={(e) => e.stopPropagation()}>
         {localTime(formatDate(post.CreatedAt))}
       </span>
-    </Link>
+    </div>
   );
 }
 

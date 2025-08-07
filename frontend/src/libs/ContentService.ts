@@ -52,7 +52,19 @@ export const postService = {
    * @param content 更新する内容
    */
   async updatePost(id: string, content: string): Promise<Post> {
-    const { data } = await apiClient.put<Post>(`/posts/${id}`, { content });
+    const { data } = await apiClient.patch<Post>(`/posts/${id}`, { content });
+    return data;
+  },
+
+  /**
+   * 指定したIDの投稿のチェックボックス状態を更新
+   * @param id 投稿のID
+   * @param IsChecked チェック状態
+   */
+  async updateCheckbox(id: string, IsChecked: boolean): Promise<Post> {
+    const { data } = await apiClient.patch<Post>(`/posts/${id}`, {
+      is_checked: IsChecked,
+    });
     return data;
   },
 

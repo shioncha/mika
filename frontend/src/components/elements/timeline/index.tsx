@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 import { postService, tagService } from "../../../libs/ContentService";
@@ -111,7 +111,7 @@ function TimelineComponent({
   const finalGroupedPosts: { [date: string]: Post[] } = {};
   sortedDates.forEach((date) => {
     const filtered = groupedPosts[date].filter(
-      (post) => !onlyUnchecked || (!post.is_checked && post.has_checkbox)
+      (post) => !onlyUnchecked || (!post.IsChecked && post.HasCheckbox)
     );
     if (filtered.length > 0) {
       finalGroupedPosts[date] = filtered;

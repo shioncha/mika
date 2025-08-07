@@ -1,9 +1,9 @@
 interface Post {
   ID: string;
   Content: string;
-  has_checkbox: boolean;
-  is_checked: boolean;
-  due_date: string;
+  HasCheckbox: boolean;
+  IsChecked: boolean;
+  DueDate: string;
   CreatedAt: string;
   UpdatedAt: string;
 }

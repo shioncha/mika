@@ -48,10 +48,12 @@ func (r *TagRepository) GetPostsByTag(ctx context.Context, userID string, tag st
 	var postList []*repository.Post
 	for _, post := range posts {
 		postList = append(postList, &repository.Post{
-			ID:        post.ID,
-			Content:   post.Content,
-			CreatedAt: post.CreatedAt.String(),
-			UpdatedAt: post.UpdatedAt.String(),
+			ID:          post.ID,
+			Content:     post.Content,
+			HasCheckbox: post.HasCheckbox,
+			IsChecked:   post.IsChecked,
+			CreatedAt:   post.CreatedAt.String(),
+			UpdatedAt:   post.UpdatedAt.String(),
 		})
 	}
 	return postList, nil

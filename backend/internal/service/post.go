@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"slices"
 
 	"github.com/shioncha/mika/backend/ent"
 	"github.com/shioncha/mika/backend/internal/repository"
@@ -49,6 +50,8 @@ func (s *PostService) CreatePost(ctx context.Context, userID string, content str
 		return err
 	}
 
+	hasCheckbox := slices.Contains(tags, "task") || slices.Contains(tags, "reminder")
+
 	tx, err := s.client.Tx(ctx)
 	if err != nil {
 		return err
@@ -66,7 +69,7 @@ func (s *PostService) CreatePost(ctx context.Context, userID string, content str
 		return err
 	}
 
-	err = s.postRepo.CreatePost(ctx, tx, userID, content, tagIDs)
+	err = s.postRepo.CreatePost(ctx, tx, userID, content, tagIDs, hasCheckbox)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -85,6 +88,8 @@ func (s *PostService) UpdateContent(ctx context.Context, userID string, postID s
 		return err
 	}
 
+	hasCheckbox := slices.Contains(tags, "task") || slices.Contains(tags, "reminder")
+
 	tx, err := s.client.Tx(ctx)
 	if err != nil {
 		return err
@@ -102,7 +107,7 @@ func (s *PostService) UpdateContent(ctx context.Context, userID string, postID s
 		return err
 	}
 
-	err = s.postRepo.UpdateContent(ctx, tx, userID, postID, content, tagIDs)
+	err = s.postRepo.UpdateContent(ctx, tx, userID, postID, content, tagIDs, hasCheckbox)
 	if err != nil {
 		tx.Rollback()
 		return err

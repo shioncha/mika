@@ -23,10 +23,10 @@ type PostRepository interface {
 	GetPostByPostID(ctx context.Context, userID string, postID string) (*Post, error)
 
 	// 投稿を作成
-	CreatePost(ctx context.Context, tx *ent.Tx, userID string, post string, tags []string) error
+	CreatePost(ctx context.Context, tx *ent.Tx, userID string, post string, tags []string, hasCheckbox bool) error
 
 	// 投稿内容を更新
-	UpdateContent(ctx context.Context, tx *ent.Tx, userID string, postID string, content string, tags []string) error
+	UpdateContent(ctx context.Context, tx *ent.Tx, userID string, postID string, content string, tags []string, hasCheckbox bool) error
 
 	// 投稿のチェックボックスを更新
 	UpdateCheckbox(ctx context.Context, userID string, postID string, isChecked bool) error

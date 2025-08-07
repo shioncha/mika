@@ -63,10 +63,11 @@ func (r *PostRepository) GetPostByPostID(ctx context.Context, userID string, pos
 	}, nil
 }
 
-func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID string, content string, tags []string) error {
+func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID string, content string, tags []string, hasCheckbox bool) error {
 	_, err := tx.Posts.Create().
 		SetUserID(userID).
 		SetContent(content).
+		SetHasCheckbox(hasCheckbox).
 		AddTagIDs(tags...).
 		Save(ctx)
 	if err != nil {
@@ -75,10 +76,11 @@ func (r *PostRepository) CreatePost(ctx context.Context, tx *ent.Tx, userID stri
 	return nil
 }
 
-func (r *PostRepository) UpdateContent(ctx context.Context, tx *ent.Tx, userID string, postID string, content string, tags []string) error {
+func (r *PostRepository) UpdateContent(ctx context.Context, tx *ent.Tx, userID string, postID string, content string, tags []string, hasCheckbox bool) error {
 	_, err := tx.Posts.Update().
 		Where(posts.UserIDEQ(userID), posts.IDEQ(postID)).
 		SetContent(content).
+		SetHasCheckbox(hasCheckbox).
 		Save(ctx)
 	if err != nil {
 		return err

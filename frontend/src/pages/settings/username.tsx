@@ -7,7 +7,7 @@ function UsernamePage() {
     event.preventDefault();
     apiClient
       .patch("/account", {
-        name: (event.target as HTMLFormElement).name.valueOf(),
+        name: event.currentTarget.username.value,
       })
       .then(() => {
         alert("Username updated successfully!");
@@ -23,8 +23,8 @@ function UsernamePage() {
       <h1>Change Name</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name">New Name</label>
-          <InputText type="text" id="name" name="name" required />
+          <label htmlFor="username">New Name</label>
+          <InputText type="text" id="username" name="username" required />
           <Button type="submit">Update Name</Button>
         </div>
       </form>

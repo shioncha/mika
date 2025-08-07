@@ -37,12 +37,11 @@ export default function Modal() {
       .updatePost(id || "", content)
       .then((updatedPost) => {
         setPosts([updatedPost]);
-        navigate(-1);
+        closeModal();
       })
       .catch(() => {
         console.error("Failed to update post");
       });
-    closeModal();
   }
 
   function deletePost() {

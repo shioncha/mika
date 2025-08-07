@@ -1,6 +1,6 @@
 .date {
   border-radius: calc(6.4px + 0.8rem);
-  color: #757575;
+  color: var(--color-text-secondary);
   display: block;
   font-size: 0.8rem;
   line-height: 0.8rem;
@@ -16,7 +16,7 @@
 
 .loading,
 .noPosts {
-  color: #757575;
+  color: var(--color-text-tertiary);
   margin: 16px 0;
   text-align: center;
 }

@@ -1,5 +1,5 @@
 .tags {
-  background-color: var(--c-bg-base);
+  background-color: var(--color-background-primary);
   display: flex;
   gap: 8px;
   overflow-x: scroll;
@@ -12,9 +12,9 @@
 }
 
 .tag {
-  background-color: var(--c-bg-primary);
+  background-color: var(--color-background-secondary);
   border-radius: 24px;
-  color: var(--c-text-primary);
+  color: var(--color-text-primary);
   padding: 8px 16px;
   text-decoration: none;
 }
@@ -22,10 +22,10 @@
   text-decoration: none;
 }
 .tag:hover:not(.active) {
-  background-color: var(--c-bg-secondary);
+  background-color: var(--color-background-hover);
 }
 
 .active {
-  background-color: #000;
-  color: #fff;
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-on-accent);
 }

@@ -1,0 +1,30 @@
+:root {
+  /* Background Colors */
+  --color-background-primary: #fff;
+  --color-background-secondary: #f9f9f9;
+  --color-background-tertiary: #f2f4f6;
+  --color-background-hover: #e9e9e9;
+  --color-background-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text Colors */
+  --color-text-primary: #000;
+  --color-text-secondary: #555;
+  --color-text-tertiary: #757575;
+  --color-text-on-accent: #fff;
+
+  /* Border/Separator Colors */
+  --color-border-primary: #ced4da;
+  --color-border-secondary: #e0e0e0;
+  --color-border-focus: #555;
+
+  /* State Colors */
+  --color-accent-primary: #333;
+  --color-accent-primary-hover: #555;
+  --color-accent-secondary: #00f;
+  --color-accent-tertiary: #4caf50;
+  --color-disabled-background: #ccc;
+  --color-disabled-text: #757575;
+  --color-error-background: color-mix(in srgb, #f00 10%, #fff);
+  --color-error-text: #f00;
+  --color-error-border: color-mix(in srgb, #f00 20%, #fff);
+}

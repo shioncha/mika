@@ -51,12 +51,13 @@ function ListElementPost({ post }: ListElementPostProps) {
   };
 
   return (
-    <Link
-      key={post.ID}
-      className={style.post}
-      to={`/posts/${post.ID}`}
-      state={{ background: location }}
-    >
+    <div className={style.post}>
+      <Link
+        key={post.ID}
+        className={style.link}
+        to={`/posts/${post.ID}`}
+        state={{ background: location }}
+      ></Link>
       <div className={style.contentContainer}>
         {post.HasCheckbox ? (
           <input
@@ -81,7 +82,7 @@ function ListElementPost({ post }: ListElementPostProps) {
       <span className={style.time} onClick={(e) => e.stopPropagation()}>
         {localTime(formatDate(post.CreatedAt))}
       </span>
-    </Link>
+    </div>
   );
 }
 

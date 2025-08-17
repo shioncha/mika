@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -29,11 +30,12 @@ func newApp() (*App, error) {
 
 	redisClient := database.NewRedisClient()
 	sessionRepo := redis.NewSessionRepository(redisClient)
+	rateLimiteRepo := redis.NewRateLimitRepository(redisClient)
 
 	client := database.SetupClient()
 
 	authRepo := ent.NewAuthRepository(client)
-	authService := service.NewAuthService(authRepo, sessionRepo, publicKey, privateKey)
+	authService := service.NewAuthService(authRepo, sessionRepo, rateLimiteRepo, publicKey, privateKey)
 	authHandler := handler.NewAuthHandler(authService)
 
 	postRepo := ent.NewPostRepository(client)
@@ -50,7 +52,9 @@ func newApp() (*App, error) {
 
 	authMiddleware := middleware.NewAuthRequiredMiddleware(publicKey)
 
-	router := router.SetupRouter(authHandler, postHandler, tagHandler, userHandler, authMiddleware)
+	rateLimitMiddleware := middleware.NewRateLimitMiddleware(rateLimiteRepo, 5, 5*time.Minute)
+
+	router := router.SetupRouter(authHandler, postHandler, tagHandler, userHandler, authMiddleware, rateLimitMiddleware)
 
 	cleanupFunc := func() {
 		database.CloseClient(client)

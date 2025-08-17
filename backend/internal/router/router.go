@@ -16,6 +16,7 @@ func SetupRouter(
 	th *handler.TagHandler,
 	uh *handler.UserHandler,
 	am *middleware.AuthRequiredMiddleware,
+	rm *middleware.RateLimitMiddleware,
 ) *gin.Engine {
 	router := gin.Default()
 
@@ -41,9 +42,13 @@ func SetupRouter(
 	/*
 	 * Public routes
 	 */
-	router.POST("/sign-up", ah.SignUp)
-	router.POST("/sign-in", ah.SignIn)
-	router.POST("/refresh-token", ah.RefreshAccessToken)
+	authRoutes := router.Group("/")
+	authRoutes.Use(rm.IPBasedRateLimit())
+	{
+		authRoutes.POST("/sign-up", ah.SignUp)
+		authRoutes.POST("/sign-in", ah.SignIn)
+		authRoutes.POST("/refresh-token", ah.RefreshAccessToken)
+	}
 	router.POST("/sign-out", ah.SignOut)
 
 	/*

@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--color-background-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,7 +12,7 @@
 }
 
 .modal {
-  background-color: white;
+  background-color: var(--color-background-primary);
   padding: 24px;
   border-radius: 24px;
   max-width: 500px;
@@ -26,7 +26,7 @@
 }
 
 .textarea {
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border-primary);
   border-radius: 8px;
   box-sizing: border-box;
   field-sizing: content;
@@ -38,33 +38,37 @@
   padding: 8px;
   width: 100%;
 }
+.textarea:focus {
+  border-color: var(--color-border-focus);
+  outline: none;
+}
 
 .button {
-  background-color: #000;
+  background-color: var(--color-accent-primary);
   border: none;
   border-radius: 8px;
-  color: var(--c-button-text);
+  color: var(--color-text-on-accent);
   font-size: 1rem;
   margin: 16px 0 0;
   padding: 8px;
 }
 .button:hover {
-  background-color: var(--c-button-bg-hover);
+  background-color: var(--color-accent-primary-hover);
 }
 
 .close {
-  background-color: #000;
+  background-color: var(--color-accent-primary);
   border-radius: 20px;
-  color: var(--c-button-text);
+  color: var(--color-text-on-accent);
   cursor: pointer;
   padding: 8px;
 }
 
 .edit {
-  background-color: #000;
+  background-color: var(--color-accent-primary);
   border-radius: 20px;
   border: none;
-  color: var(--c-button-text);
+  color: var(--color-text-on-accent);
   cursor: pointer;
   padding: 8px 20px;
   font-size: 16px;

@@ -11,18 +11,20 @@ import (
 )
 
 type AuthService struct {
-	authRepo    repository.AuthRepository
-	sessionRepo repository.SessionRepository
-	publicKey   *rsa.PublicKey
-	privateKey  *rsa.PrivateKey
+	authRepo      repository.AuthRepository
+	sessionRepo   repository.SessionRepository
+	rateLimitRepo repository.RateLimitRepository
+	publicKey     *rsa.PublicKey
+	privateKey    *rsa.PrivateKey
 }
 
-func NewAuthService(authRepo repository.AuthRepository, sessionRepo repository.SessionRepository, publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) *AuthService {
+func NewAuthService(authRepo repository.AuthRepository, sessionRepo repository.SessionRepository, rateLimitRepo repository.RateLimitRepository, publicKey *rsa.PublicKey, privateKey *rsa.PrivateKey) *AuthService {
 	return &AuthService{
-		authRepo:    authRepo,
-		sessionRepo: sessionRepo,
-		publicKey:   publicKey,
-		privateKey:  privateKey,
+		authRepo:      authRepo,
+		sessionRepo:   sessionRepo,
+		rateLimitRepo: rateLimitRepo,
+		publicKey:     publicKey,
+		privateKey:    privateKey,
 	}
 }
 
@@ -103,6 +105,18 @@ func (s *AuthService) SignIn(c context.Context, params SignInParams, deviceInfo 
 	// メールアドレスの正規化
 	email := auth.NormalizeEmail(params.Email)
 
+	// レートリミット
+	failureKey := fmt.Sprintf("login_failures:email:%s", email)
+	const failureLimit = 5
+
+	currentFailures, err := s.rateLimitRepo.Get(c, failureKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get rate limit: %w", err)
+	}
+	if currentFailures >= failureLimit {
+		return nil, fmt.Errorf("too many login attempts, please try again later")
+	}
+
 	// ユーザー検索
 	user, err := s.authRepo.FindByEmail(c, email)
 	if err != nil {
@@ -111,8 +125,12 @@ func (s *AuthService) SignIn(c context.Context, params SignInParams, deviceInfo 
 
 	// パスワード検証
 	if err := auth.ComparePassword(user.PasswordHash, params.Password); err != nil {
+		s.rateLimitRepo.Increment(c, failureKey, 15*time.Minute)
 		return nil, fmt.Errorf("invalid credentials")
 	}
+
+	// レートリミットをリセット
+	s.rateLimitRepo.Reset(c, failureKey)
 
 	// JWTトークン生成
 	token, err := auth.GenerateJWT(user.ID, s.privateKey)

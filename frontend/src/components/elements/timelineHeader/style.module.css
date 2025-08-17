@@ -9,7 +9,7 @@
 }
 
 .icon {
-  background-color: #000;
+  background-color: var(--color-accent-primary);
   border: none;
   border-radius: 50%;
   height: 2.5rem;
@@ -20,5 +20,5 @@
   margin-left: 12px;
 }
 .icon svg {
-  margin: .5rem;
+  margin: 0.5rem;
 }

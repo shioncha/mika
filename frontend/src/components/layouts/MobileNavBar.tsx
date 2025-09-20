@@ -5,7 +5,7 @@ import { IoIosAdd } from "react-icons/io";
 import { Link, useLocation } from "react-router";
 
 import { UserContext } from "../../hooks/user_context";
-import style from "../../styles/components/layouts/NavMenu.module.css";
+import style from "../../styles/components/layouts/MobileNavBar.module.css";
 
 interface NavItem {
   label: string;
@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-function NavMenu() {
+function MobileNavBar() {
   const { user } = useContext(UserContext);
   const [active, setActive] = useState<string>("");
   const location = useLocation();
@@ -91,4 +91,4 @@ function NavMenu() {
   );
 }
 
-export default NavMenu;
+export default MobileNavBar;

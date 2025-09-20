@@ -5,7 +5,7 @@ import { IoIosAdd } from "react-icons/io";
 import { Link, useLocation } from "react-router";
 
 import { UserContext } from "../../hooks/user_context";
-import styles from "../../styles/components/layouts/NavBar.module.css";
+import style from "../../styles/components/layouts/NavBar.module.css";
 
 interface NavItem {
   label: string;
@@ -61,18 +61,18 @@ function NavBar() {
   }, [location]);
 
   return (
-    <div className={styles.navbar}>
-      <span className={styles.logo}>Mika</span>
+    <div className={style.navbar}>
+      <span className={style.logo}>Mika</span>
       {navItems.map((item) => (
         <Link
           key={item.label}
           to={item.link}
-          className={`${styles.link} ${
-            active == item.link ? styles.active : undefined
+          className={`${style.link} ${
+            active == item.link ? style.active : undefined
           }`}
         >
-          <item.icon className={styles.linkIcon} />
-          <span className={styles.linkText}>{item.label}</span>
+          <item.icon className={style.linkIcon} />
+          <span className={style.linkText}>{item.label}</span>
         </Link>
       ))}
     </div>

@@ -3,16 +3,16 @@ import { Outlet } from "react-router";
 import MobileNavBar from "../components/layouts/MobileNavBar";
 import NavBar from "../components/layouts/NavBar";
 import useMobile from "../libs/useMobile";
-import styles from "../styles/layouts/Base.module.css";
+import style from "../styles/layouts/Base.module.css";
 
 function Base() {
   const isMobile = useMobile();
 
   return (
-    <div className={styles.container}>
+    <div className={style.container}>
       {isMobile ? <MobileNavBar /> : <NavBar />}
-      <div className={styles.content}>
-        <div className={styles.spacer}>
+      <div className={style.content}>
+        <div className={style.spacer}>
           <Outlet />
         </div>
       </div>

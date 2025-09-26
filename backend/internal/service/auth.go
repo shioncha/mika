@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/shioncha/mika/backend/internal/auth"
 	"github.com/shioncha/mika/backend/internal/repository"
 )
@@ -109,8 +110,8 @@ func (s *AuthService) SignIn(c context.Context, params SignInParams, deviceInfo 
 	failureKey := fmt.Sprintf("login_failures:email:%s", email)
 	const failureLimit = 5
 
-	currentFailures, err := s.rateLimitRepo.Get(c, failureKey)
-	if err != nil {
+	currentFailures, err := s.rateLimitRepo.Increment(c, failureKey, 15*time.Minute)
+	if err != nil && err != redis.Nil {
 		return nil, fmt.Errorf("failed to get rate limit: %w", err)
 	}
 	if currentFailures >= failureLimit {

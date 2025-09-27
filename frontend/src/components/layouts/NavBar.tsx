@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { IconType } from "react-icons";
 import { CiCirclePlus, CiHome, CiLock, CiSettings } from "react-icons/ci";
 import { IoIosAdd } from "react-icons/io";
 import { Link, useLocation } from "react-router";
 
-import { UserContext } from "../../hooks/user_context";
+import { useUser } from "../../hooks/user_context";
 import style from "../../styles/components/layouts/NavBar.module.css";
 
 interface NavItem {
@@ -50,7 +50,7 @@ const guestNavItems: NavItem[] = [
 ];
 
 function NavBar() {
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
   const [active, setActive] = useState<string>("");
   const location = useLocation();
 

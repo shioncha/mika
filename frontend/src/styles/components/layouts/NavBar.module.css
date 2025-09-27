@@ -1,6 +1,9 @@
 .navbar {
   background-color: var(--color-background-secondary);
+  height: 100vh;
   padding: 15px 0;
+  position: sticky;
+  top: 0;
   width: 250px;
 }
 

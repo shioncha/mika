@@ -1,5 +1,6 @@
 :root {
-  font-family: Heletica Neue, Arial, Hiragino Kaku Gothic ProN, Hiragino Sans, BIZ UDPGothic, Meiryo, sans-serif;
+  font-family: Heletica Neue, Arial, Hiragino Kaku Gothic ProN, Hiragino Sans,
+    BIZ UDPGothic, Meiryo, sans-serif;
   line-height: 1.5;
 }
 
@@ -18,7 +19,8 @@ body {
 }
 
 #root {
-  width: 100%;
-  max-width: 768px;
   height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }

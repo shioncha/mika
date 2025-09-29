@@ -1,6 +1,6 @@
 import Button from "../../../components/elements/Button";
 import InputText from "../../../components/elements/InputText";
-import apiClient from "../../../libs/api";
+import apiClient from "../../../lib/api";
 
 function UsernamePage() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 
 import Button from "../../components/elements/Button";
-import { postService } from "../../libs/ContentService";
+import { postService } from "../../lib/ContentService";
 import style from "./New.module.css";
 
 function NewPage() {

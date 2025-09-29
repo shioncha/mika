@@ -1,9 +1,9 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import apiClient from "../libs/api";
-import { setupAuthHeader } from "../libs/api";
-import { authService } from "../libs/AuthService";
+import apiClient from "../lib/api";
+import { setupAuthHeader } from "../lib/api";
+import { authService } from "../lib/AuthService";
 
 type AuthContextType = {
   isAuthenticated: boolean;

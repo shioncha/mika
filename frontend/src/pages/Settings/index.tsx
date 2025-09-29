@@ -1,8 +1,8 @@
-import List from "../components/elements/List";
-import ListElementSetting from "../components/elements/ListElementSetting";
-import { useAuth } from "../hooks/auth_context";
-import { useUser } from "../hooks/user_context";
-import style from "../styles/pages/settings.module.css";
+import List from "../../components/elements/List";
+import ListElementSetting from "../../components/elements/ListElementSetting";
+import { useAuth } from "../../hooks/useAuth";
+import { useUser } from "../../hooks/useUser";
+import style from "./Settings.module.css";
 
 function SettingsPage() {
   const { signOut } = useAuth();
@@ -10,7 +10,7 @@ function SettingsPage() {
 
   return (
     <>
-      <p className={style.name}>Hello, {user?.name}!</p>
+      <h1>Settings</h1>
       <List className={style.list}>
         <ListElementSetting to="name" name="Name">
           {user?.name || "-"}

@@ -6,7 +6,7 @@ import { formatDate, groupByDate, localDate } from "../../../libs/datetime";
 import type { Post } from "../../../type/post";
 import List from "../List";
 import ListElementPost from "../ListElementPost";
-import style from "./style.module.css";
+import style from "./Timeline.module.css";
 
 interface TimelineProps {
   tag?: string;

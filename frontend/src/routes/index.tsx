@@ -1,6 +1,6 @@
 import { Route, Routes, useLocation } from "react-router";
 
-import Modal from "../components/elements/modal";
+import Modal from "../components/elements/Modal";
 import SettingsLayout from "../components/layouts/Settings";
 import TimelineLayout from "../components/layouts/timeline";
 import { useAuth } from "../hooks/useAuth";

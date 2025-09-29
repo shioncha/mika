@@ -6,7 +6,7 @@ import { postService } from "../../../libs/ContentService";
 import { formatDate, localDate, localTime } from "../../../libs/datetime";
 import type { Post } from "../../../type/post";
 import Button from "../Button";
-import style from "./modal.module.css";
+import style from "./Modal.module.css";
 
 export default function Modal() {
   const navigate = useNavigate();

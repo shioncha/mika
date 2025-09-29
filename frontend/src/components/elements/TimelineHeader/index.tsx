@@ -1,7 +1,7 @@
 import { CiCalendar, CiCircleCheck } from "react-icons/ci";
 
 import Button from "../Button";
-import style from "./style.module.css";
+import style from "./TimelineHeader.module.css";
 
 interface Props {
   onlyUnchecked: boolean;

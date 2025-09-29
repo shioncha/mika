@@ -1,7 +1,7 @@
-import { type InputHTMLAttributes,useState } from "react";
+import { type InputHTMLAttributes, useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-import styles from "../../styles/components/elements/InputText.module.css";
+import styles from "./InputText.module.css";
 
 interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
   hasPasswordMask?: boolean;

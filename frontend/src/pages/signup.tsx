@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
-import Button from "../components/elements/Button.tsx";
-import InputText from "../components/elements/InputText.tsx";
+import Button from "../components/elements/Button";
+import InputText from "../components/elements/InputText";
 import { useAuth } from "../hooks/useAuth";
 import type { AuthResponse, SignUpCredentials } from "../libs/AuthService";
 import { authService } from "../libs/AuthService";

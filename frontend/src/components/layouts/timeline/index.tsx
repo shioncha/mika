@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useParams } from "react-router";
 
-import TagsComponent from "../../elements/tags";
-import TimelineComponent from "../../elements/timeline";
-import TimelineHeaderComponent from "../../elements/timelineHeader";
+import TagsComponent from "../../elements/Tags";
+import TimelineComponent from "../../elements/Timeline";
+import TimelineHeaderComponent from "../../elements/TimelineHeader";
 
 function TimelineLayout() {
   const { tag } = useParams();

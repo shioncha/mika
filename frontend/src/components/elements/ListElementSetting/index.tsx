@@ -1,7 +1,7 @@
 import { FaChevronRight } from "react-icons/fa6";
 import { Link } from "react-router";
 
-import style from "../../styles/components/elements/ListElementSetting.module.css";
+import style from "./ListElementSetting.module.css";
 
 interface ListElementSettingProps
   extends React.HTMLAttributes<HTMLAnchorElement> {

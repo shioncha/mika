@@ -1,4 +1,4 @@
-import styles from "../../styles/components/elements/List.module.css";
+import styles from "./List.module.css";
 
 function List({
   children,

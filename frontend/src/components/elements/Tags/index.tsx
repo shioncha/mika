@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 
 import { tagService } from "../../../libs/ContentService";
 import type { Tag } from "../../../type/tag";
-import style from "./style.module.css";
+import style from "./Tags.module.css";
 
 function TagsComponent({
   tag,

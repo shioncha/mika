@@ -1,6 +1,6 @@
-import type { Post } from "../type/post";
-import type { Tag } from "../type/tag";
-import type { User } from "../type/user";
+import type { Post } from "../types/post";
+import type { Tag } from "../types/tag";
+import type { User } from "../types/user";
 import apiClient from "./api";
 
 interface PostResponse {

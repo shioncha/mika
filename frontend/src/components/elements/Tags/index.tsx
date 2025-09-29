@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import { tagService } from "../../../lib/ContentService";
-import type { Tag } from "../../../type/tag";
+import type { Tag } from "../../../types/tag";
 import style from "./Tags.module.css";
 
 function TagsComponent({

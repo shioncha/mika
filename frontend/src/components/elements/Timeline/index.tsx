@@ -3,7 +3,7 @@ import { useInView } from "react-intersection-observer";
 
 import { postService, tagService } from "../../../lib/ContentService";
 import { formatDate, groupByDate, localDate } from "../../../lib/datetime";
-import type { Post } from "../../../type/post";
+import type { Post } from "../../../types/post";
 import List from "../List";
 import ListElementPost from "../ListElementPost";
 import style from "./Timeline.module.css";

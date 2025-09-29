@@ -1,4 +1,4 @@
-import type { Post } from "../type/post";
+import type { Post } from "../types/post";
 
 interface GroupedPostsProps {
   [key: string]: Post[];

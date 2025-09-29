@@ -1,11 +1,11 @@
 import { Outlet } from "react-router";
 
-import MobileNavBar from "../components/layouts/MobileNavBar";
-import NavBar from "../components/layouts/NavBar";
-import SideBar from "../components/layouts/SideBar";
-import { useUser } from "../hooks/useUser";
-import useMobile from "../libs/useMobile";
-import style from "../styles/layouts/Base.module.css";
+import MobileNavBar from "../../components/layouts/MobileNavBar";
+import NavBar from "../../components/layouts/NavBar";
+import SideBar from "../../components/layouts/SideBar";
+import { useUser } from "../../hooks/useUser";
+import useMobile from "../../libs/useMobile";
+import style from "./Base.module.css";
 
 function Base() {
   const { user } = useUser();

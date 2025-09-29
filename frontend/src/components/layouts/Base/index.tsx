@@ -1,10 +1,10 @@
 import { Outlet } from "react-router";
 
+import useMobile from "../../../hooks/useMobile";
+import { useUser } from "../../../hooks/useUser";
 import MobileNavBar from "../MobileNavBar";
 import NavBar from "../NavBar";
 import SideBar from "../SideBar";
-import { useUser } from "../../../hooks/useUser";
-import useMobile from "../../../lib/useMobile";
 import style from "./Base.module.css";
 
 function Base() {

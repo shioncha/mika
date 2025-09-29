@@ -1,8 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 
+import { useAuth } from "../hooks/useAuth";
 import { userService } from "../lib/ContentService";
 import type { User } from "../types/user";
-import { useAuth } from "./useAuth";
 
 type UserContextType = {
   user: User | null;

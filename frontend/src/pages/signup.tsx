@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 
 import Button from "../components/elements/Button.tsx";
 import InputText from "../components/elements/InputText.tsx";
-import { useAuth } from "../hooks/auth_context.tsx";
+import { useAuth } from "../hooks/useAuth";
 import type { AuthResponse, SignUpCredentials } from "../libs/AuthService";
 import { authService } from "../libs/AuthService";
 import style from "../styles/pages/signup.module.css";

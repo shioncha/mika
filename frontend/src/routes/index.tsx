@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from "react-router";
 import Modal from "../components/elements/modal";
 import SettingsLayout from "../components/layouts/Settings";
 import TimelineLayout from "../components/layouts/timeline";
-import { useAuth } from "../hooks/auth_context";
+import { useAuth } from "../hooks/useAuth";
 import Base from "../layouts/Base";
 import HomePage from "../pages/home";
 import NewPage from "../pages/new";

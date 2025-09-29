@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import apiClient from "../libs/api";
@@ -53,7 +47,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const handleSessionExpired = () => {
       console.log("Session expired, signing out.");
-      signOut(true); // 強制ログアウトフラグ
+      signOut(true);
     };
 
     window.addEventListener(
@@ -112,12 +106,4 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-export { AuthProvider, useAuth };
+export { AuthContext, AuthProvider };

@@ -1,13 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { userService } from "../libs/ContentService";
+import type { User } from "../type/user";
 import { useAuth } from "./auth_context";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-};
 
 type UserContextType = {
   user: User | null;
@@ -54,5 +49,12 @@ function UserProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export { UserContext, UserProvider };
-export default UserProvider;
+function useUser() {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+export { UserProvider, useUser };

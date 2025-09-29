@@ -1,14 +1,12 @@
-import { useContext } from "react";
-
 import List from "../components/elements/List";
 import ListElementSetting from "../components/elements/ListElementSetting";
 import { useAuth } from "../hooks/auth_context";
-import { UserContext } from "../hooks/user_context";
+import { useUser } from "../hooks/user_context";
 import style from "../styles/pages/settings.module.css";
 
 function SettingsPage() {
   const { signOut } = useAuth();
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
 
   return (
     <>

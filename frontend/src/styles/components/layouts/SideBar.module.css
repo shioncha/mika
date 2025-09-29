@@ -1,0 +1,23 @@
+.sidebar {
+  border-left: 1px solid var(--color-border-primary);
+  padding: 16px;
+  width: 350px;
+}
+
+.element {
+  background-color: var(--color-background-secondary);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.dayPicker {
+  --rdp-accent-color: #4c6bd3;
+}
+
+:global(.rdp-month_caption) {
+  font-weight: 300;
+}
+
+:global(.rdp-today) {
+  font-weight: 600;
+}

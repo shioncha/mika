@@ -2,7 +2,7 @@ import "react-day-picker/style.css";
 
 import { DayPicker } from "react-day-picker";
 
-import style from "../../styles/components/layouts/SideBar.module.css";
+import style from "./SideBar.module.css";
 
 function SideBar() {
   return (

@@ -4,8 +4,8 @@ import { CiCirclePlus, CiHome, CiLock, CiSettings } from "react-icons/ci";
 import { IoIosAdd } from "react-icons/io";
 import { Link, useLocation } from "react-router";
 
-import { useUser } from "../../hooks/useUser";
-import style from "../../styles/components/layouts/MobileNavBar.module.css";
+import { useUser } from "../../../hooks/useUser";
+import style from "./MobileNavBar.module.css";
 
 interface NavItem {
   label: string;

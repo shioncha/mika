@@ -2,7 +2,7 @@ import { Route, Routes, useLocation } from "react-router";
 
 import Modal from "../components/elements/Modal";
 import SettingsLayout from "../components/layouts/Settings";
-import TimelineLayout from "../components/layouts/timeline";
+import TimelineLayout from "../components/layouts/Timeline";
 import { useAuth } from "../hooks/useAuth";
 import Base from "../layouts/Base";
 import HomePage from "../pages/home";

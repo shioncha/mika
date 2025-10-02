@@ -1,5 +1,5 @@
-import Button from "../../../components/elements/Button";
-import InputText from "../../../components/elements/InputText";
+import Button from "../../../components/ui/Button";
+import InputText from "../../../components/ui/InputText";
 import apiClient from "../../../lib/api";
 
 function UsernamePage() {

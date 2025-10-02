@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
-import { postService, tagService } from "../../../lib/ContentService";
-import { formatDate, groupByDate, localDate } from "../../../lib/datetime";
-import type { Post } from "../../../types/post";
-import List from "../List";
+import { postService, tagService } from "../../../../lib/ContentService";
+import { formatDate, groupByDate, localDate } from "../../../../lib/datetime";
+import type { Post } from "../../../../types/post";
+import List from "../../../../components/ui/List";
 import ListElementPost from "../ListElementPost";
 import style from "./Timeline.module.css";
 

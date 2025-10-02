@@ -1,5 +1,5 @@
-import List from "../../components/elements/List";
-import ListElementSetting from "../../components/elements/ListElementSetting";
+import List from "../../components/ui/List";
+import ListElementSetting from "../../features/settings/components/ListElementSetting";
 import { useAuth } from "../../hooks/useAuth";
 import { useUser } from "../../hooks/useUser";
 import style from "./Settings.module.css";

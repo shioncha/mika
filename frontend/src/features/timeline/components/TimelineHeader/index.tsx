@@ -1,6 +1,6 @@
 import { CiCalendar, CiCircleCheck } from "react-icons/ci";
 
-import Button from "../Button";
+import Button from "../../../../components/ui/Button";
 import style from "./TimelineHeader.module.css";
 
 interface Props {

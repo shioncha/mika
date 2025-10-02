@@ -1,9 +1,9 @@
 import DOMpurify from "dompurify";
 import { Link, useLocation } from "react-router";
 
-import { postService } from "../../../lib/ContentService";
-import { formatDate, localTime } from "../../../lib/datetime";
-import type { Post } from "../../../types/post";
+import { postService } from "../../../../lib/ContentService";
+import { formatDate, localTime } from "../../../../lib/datetime";
+import type { Post } from "../../../../types/post";
 import style from "./ListElementPost.module.css";
 
 interface ListElementPostProps {

@@ -1,6 +1,6 @@
 import { Route, Routes, useLocation } from "react-router";
 
-import Modal from "../components/elements/Modal";
+import Modal from "../features/timeline/components/Modal";
 import Base from "../components/layouts/Base";
 import SettingsLayout from "../components/layouts/Settings";
 import TimelineLayout from "../components/layouts/Timeline";

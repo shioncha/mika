@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import { useNavigate, useParams } from "react-router";
 
-import { postService } from "../../../lib/ContentService";
-import { formatDate, localDate, localTime } from "../../../lib/datetime";
-import type { Post } from "../../../types/post";
-import Button from "../Button";
+import { postService } from "../../../../lib/ContentService";
+import { formatDate, localDate, localTime } from "../../../../lib/datetime";
+import type { Post } from "../../../../types/post";
+import Button from "../../../../components/ui/Button";
 import style from "./Modal.module.css";
 
 export default function Modal() {

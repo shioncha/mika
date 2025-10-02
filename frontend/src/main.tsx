@@ -5,8 +5,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 
-import { AuthProvider } from "./hooks/auth_context";
-import { UserProvider } from "./hooks/user_context";
+import { AuthProvider } from "./contexts/authContext.tsx";
+import { UserProvider } from "./contexts/userContext.tsx";
 import AppRoutes from "./routes/index.tsx";
 
 createRoot(document.getElementById("root")!).render(

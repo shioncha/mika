@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build:
+      target: dev
+    # If you don't use devcontainer, uncomment the following lines
+    # volumes:
+    #   - ./frontend/:/app
+    #   - /app/node_modules
+
+  backend:
+    build:
+      target: dev
+    environment:
+      - GIN_MODE=debug
+    volumes:
+      - ./backend/:/app

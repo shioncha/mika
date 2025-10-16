@@ -29,7 +29,7 @@ DOMAIN=
 
 Recommended to use [devcontainer](https://code.visualstudio.com/docs/devcontainers/containers).
 
-If you don't use devcontainer, uncomment the `volumes` section in `compose.override.yaml` and run the following commands.
+If you don't use devcontainer, run the following commands.
 
 ```Shell
 $ docker compose build

@@ -1,7 +1,7 @@
 # dev stage
 FROM node:22-slim AS dev
 
-WORKDIR /app
+WORKDIR /workspaces/mika/frontend
 
 RUN npm install -g pnpm
 

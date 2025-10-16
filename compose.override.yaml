@@ -2,10 +2,9 @@ services:
   frontend:
     build:
       target: dev
-    # If you don't use devcontainer, uncomment the following lines
-    # volumes:
-    #   - ./frontend/:/app
-    #   - /app/node_modules
+    volumes:
+      - .:/workspaces/mika:cached
+      - /workspaces/mika/frontend/node_modules
 
   backend:
     build:
@@ -13,4 +12,4 @@ services:
     environment:
       - GIN_MODE=debug
     volumes:
-      - ./backend/:/app
+      - .:/workspaces/mika:cached

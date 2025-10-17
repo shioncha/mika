@@ -27,12 +27,18 @@ DOMAIN=
 
 ### Development
 
-Recommended to use [devcontainer](https://code.visualstudio.com/docs/devcontainers/containers).
-
-If you don't use devcontainer, run the following commands.
+Run the following commands to set up the development environment.
 
 ```Shell
 $ docker compose build
+$ docker compose run --rm backend go generate /workspaces/mika/backend/ent
+```
+
+Recommended to use [devcontainer](https://code.visualstudio.com/docs/devcontainers/containers).
+
+If you don't use devcontainer, you need to run the following command to start.
+
+```Shell
 $ docker compose up -d
 ```
 

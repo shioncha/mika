@@ -6,7 +6,7 @@ function PasswordPage() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     apiClient
-      .patch("/account", {
+      .patch("/users/me", {
         password: event.currentTarget.password.value,
       })
       .then(() => {

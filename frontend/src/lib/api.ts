@@ -17,14 +17,14 @@ apiClient.interceptors.response.use(
       error.response?.status === 401 &&
       originalRequest &&
       !(originalRequest as any)._retry &&
-      originalRequest.url !== "/refresh-token" &&
-      originalRequest.url !== "/sign-in"
+      originalRequest.url !== "/auth/refresh" &&
+      originalRequest.url !== "/auth/sign-in"
     ) {
       (originalRequest as any)._retry = true;
 
       try {
         const { data } = await axios.post(
-          "/api/refresh-token",
+          "/api/auth/refresh",
           {},
           { withCredentials: true }
         );

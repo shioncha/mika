@@ -26,7 +26,7 @@ export const authService = {
    */
   async signUp(credentials: SignUpCredentials): Promise<AuthResponse> {
     const { data } = await apiClient.post<AuthResponse>(
-      "/sign-up",
+      "/auth/sign-up",
       credentials
     );
     return data;
@@ -39,7 +39,7 @@ export const authService = {
    */
   async signIn(credentials: SignInCredentials): Promise<AuthResponse> {
     const { data } = await apiClient.post<AuthResponse>(
-      "/sign-in",
+      "/auth/sign-in",
       credentials
     );
     return data;
@@ -50,7 +50,7 @@ export const authService = {
    */
   async signOut(): Promise<void> {
     try {
-      await apiClient.post("/sign-out");
+      await apiClient.post("/auth/sign-out");
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status !== 401) {
         console.error("Sign out request failed:", error);

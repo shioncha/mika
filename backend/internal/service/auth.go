@@ -183,3 +183,12 @@ func (s *AuthService) SignOut(c context.Context, refreshToken string) error {
 
 	return nil
 }
+
+func (s *AuthService) GetAllSessions(c context.Context, userID string) ([]*repository.Session, error) {
+	sessions, err := s.sessionRepo.GetUserSessions(c, userID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list user sessions: %w", err)
+	}
+
+	return sessions, nil
+}

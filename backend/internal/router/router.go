@@ -49,6 +49,7 @@ func SetupRouter(
 		authRoutes.POST("/sign-in", ah.SignIn)
 		authRoutes.POST("/refresh-token", ah.RefreshAccessToken)
 	}
+	router.GET("/sessions", ah.GetAllSessions)
 	router.POST("/sign-out", ah.SignOut)
 
 	/*

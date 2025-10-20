@@ -130,6 +130,18 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Signed out successfully"})
 }
 
+func (h *AuthHandler) GetAllSessions(c *gin.Context) {
+	userID := c.GetString("user_id")
+
+	sessions, err := h.authService.GetAllSessions(c.Request.Context(), userID)
+	if err != nil {
+		respondWithError(c, http.StatusInternalServerError, "Failed to retrieve sessions")
+		return
+	}
+
+	c.JSON(http.StatusOK, sessions)
+}
+
 func respondWithError(c *gin.Context, status int, message string) {
 	c.JSON(status, gin.H{"error": message})
 }

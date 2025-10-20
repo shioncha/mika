@@ -120,6 +120,29 @@ func (r *SessionRepository) DeleteSession(ctx context.Context, refreshToken stri
 	return nil
 }
 
+func (r *SessionRepository) GetSessionByHash(ctx context.Context, hashStr string) (*repository.Session, error) {
+	sessionKey := "session:" + hashStr
+
+	data, err := r.client.HGetAll(ctx, sessionKey).Result()
+	if err != nil {
+		return nil, err
+	}
+	if len(data) == 0 {
+		return nil, fmt.Errorf("session not found")
+	}
+
+	createdAt, _ := time.Parse(time.RFC3339Nano, data["created_at"])
+	lastUsedAt, _ := time.Parse(time.RFC3339Nano, data["last_used_at"])
+
+	return &repository.Session{
+		ID:         hashStr,
+		DeviceInfo: data["device_info"],
+		IPAddress:  data["ip_address"],
+		CreatedAt:  createdAt,
+		LastUsedAt: lastUsedAt,
+	}, nil
+}
+
 func (r *SessionRepository) GetUserSessions(ctx context.Context, userID string) ([]*repository.Session, error) {
 	userSessionsKey := "user_sessions:" + userID
 	sessionIDs, err := r.client.SMembers(ctx, userSessionsKey).Result()
@@ -129,9 +152,9 @@ func (r *SessionRepository) GetUserSessions(ctx context.Context, userID string) 
 
 	var sessions []*repository.Session
 	for _, sessionID := range sessionIDs {
-		session, err := r.GetSession(ctx, sessionID)
+		session, err := r.GetSessionByHash(ctx, sessionID)
 		if err != nil {
-			continue // Ignore errors for individual sessions
+			continue
 		}
 		sessions = append(sessions, session)
 	}

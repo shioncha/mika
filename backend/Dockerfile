@@ -1,7 +1,7 @@
 # dev stage
 FROM golang:latest AS dev
 
-WORKDIR /app
+WORKDIR /workspaces/mika/backend
 
 RUN go install github.com/air-verse/air@latest
 

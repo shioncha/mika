@@ -19,16 +19,34 @@ FRONTEND_URL=http://localhost
 DB_USER=
 DB_PASSWORD=
 DB_NAME=
+
+REDIS_PASSWORD=
+
+DOMAIN=
 ```
 
 ### Development
 
+Run the following commands to set up the development environment.
+
 ```Shell
-docker compose -f compose.dev.yaml up --build
+$ docker compose build
+$ docker compose run --rm backend go generate /workspaces/mika/backend/ent
+```
+
+Recommended to use [devcontainer](https://code.visualstudio.com/docs/devcontainers/containers).
+
+If you don't use devcontainer, you need to run the following command to start.
+
+```Shell
+$ docker compose up -d
 ```
 
 ### Production
 
+Only `compose.yaml` is needed. Run the following commands.
+
 ```Shell
-docker compose up --build
+$ docker compose -f compose.yaml build
+$ docker compose -f compose.yaml up -d
 ```

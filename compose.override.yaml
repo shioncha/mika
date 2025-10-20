@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      target: dev
+    volumes:
+      - .:/workspaces/mika:cached
+      - /workspaces/mika/frontend/node_modules
+
+  backend:
+    build:
+      target: dev
+    environment:
+      - GIN_MODE=debug
+    volumes:
+      - .:/workspaces/mika:cached

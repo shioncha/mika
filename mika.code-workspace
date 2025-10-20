@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "Frontend",
+      "path": "frontend",
+      "uri": "vscode-remote://dev-container+${localWorkspaceFolder}/.devcontainer/frontend/devcontainer.json"
+    },
+    {
+      "name": "Backend",
+      "path": "backend",
+      "uri": "vscode-remote://dev-container+${localWorkspaceFolder}/.devcontainer/backend/devcontainer.json"
+    }
+  ],
+  "settings": {
+    "git.openRepositoryInParentFolders": "always"
+  }
+}

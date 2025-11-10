@@ -142,6 +142,17 @@ func (h *AuthHandler) GetAllSessions(c *gin.Context) {
 	c.JSON(http.StatusOK, sessions)
 }
 
+func (h *AuthHandler) RevokeAllSessions(c *gin.Context) {
+	userID := c.GetString("user_id")
+
+	if err := h.authService.RevokeAllSessions(c.Request.Context(), userID); err != nil {
+		respondWithError(c, http.StatusInternalServerError, "Failed to revoke sessions")
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "All sessions revoked successfully"})
+}
+
 func respondWithError(c *gin.Context, status int, message string) {
 	c.JSON(status, gin.H{"error": message})
 }

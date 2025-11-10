@@ -192,3 +192,11 @@ func (s *AuthService) GetAllSessions(c context.Context, userID string) ([]*repos
 
 	return sessions, nil
 }
+
+func (s *AuthService) RevokeAllSessions(c context.Context, userID string) error {
+	if err := s.sessionRepo.RevokeAllSessions(c, userID); err != nil {
+		return fmt.Errorf("failed to revoke all user sessions: %w", err)
+	}
+
+	return nil
+}

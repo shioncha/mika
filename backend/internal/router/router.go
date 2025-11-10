@@ -60,6 +60,7 @@ func SetupRouter(
 			userRoutes.GET("", uh.Get)
 			userRoutes.PATCH("", uh.Update)
 			userRoutes.GET("/sessions", ah.GetAllSessions)
+			userRoutes.DELETE("/sessions", ah.RevokeAllSessions)
 		}
 
 		postRoutes := authorized.Group("/posts")

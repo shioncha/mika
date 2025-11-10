@@ -165,3 +165,23 @@ func (r *SessionRepository) GetUserSessions(ctx context.Context, userID string) 
 
 	return sessions, nil
 }
+
+func (r *SessionRepository) RevokeAllSessions(ctx context.Context, userID string) error {
+	userSessionsKey := "user_sessions:" + userID
+	sessionIDs, err := r.client.SMembers(ctx, userSessionsKey).Result()
+	if err != nil {
+		return err
+	}
+
+	pipe := r.client.Pipeline()
+	pipe.Del(ctx, userSessionsKey)
+	for _, sessionID := range sessionIDs {
+		pipe.Del(ctx, "session:"+sessionID)
+	}
+
+	if _, err := pipe.Exec(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -1,9 +1,9 @@
 import { Route, Routes, useLocation } from "react-router";
 
-import Modal from "../features/timeline/components/Modal";
 import Base from "../components/layouts/Base";
 import SettingsLayout from "../components/layouts/Settings";
 import TimelineLayout from "../components/layouts/Timeline";
+import Modal from "../features/timeline/components/Modal";
 import { useAuth } from "../hooks/useAuth";
 import HomePage from "../pages/Home";
 import NewPage from "../pages/New";
@@ -11,6 +11,7 @@ import SettingsPage from "../pages/Settings";
 import AboutPage from "../pages/Settings/About";
 import EmailPage from "../pages/Settings/Email";
 import PasswordPage from "../pages/Settings/Password";
+import SessionPage from "../pages/Settings/Session";
 import UsernamePage from "../pages/Settings/Username";
 import SignInPage from "../pages/SignIn";
 import SignUpPage from "../pages/SignUp";
@@ -37,6 +38,7 @@ function AppRoutes() {
             <Route path="name" element={<UsernamePage />} />
             <Route path="email" element={<EmailPage />} />
             <Route path="password" element={<PasswordPage />} />
+            <Route path="sessions" element={<SessionPage />} />
             <Route path="about" element={<AboutPage />} />
           </Route>
           <Route path="/tags/:tag" element={<TimelineLayout />} />

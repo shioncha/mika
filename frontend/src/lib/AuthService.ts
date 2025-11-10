@@ -58,3 +58,13 @@ export const authService = {
     }
   },
 };
+
+export const getAllSessions = async () => {
+  const { data } = await apiClient.get("/users/me/sessions");
+  return data;
+};
+
+export const revokeAllSessions = async () => {
+  const result = await apiClient.delete(`/users/me/sessions`);
+  return result;
+};

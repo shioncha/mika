@@ -6,7 +6,7 @@ function UsernamePage() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     apiClient
-      .patch("/account", {
+      .patch("/users/me", {
         name: event.currentTarget.username.value,
       })
       .then(() => {

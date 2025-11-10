@@ -29,4 +29,7 @@ type SessionRepository interface {
 
 	// ユーザーのセッション一覧を取得
 	GetUserSessions(ctx context.Context, userID string) ([]*Session, error)
+
+	// ユーザーの全セッションを削除
+	RevokeAllSessions(ctx context.Context, userID string) error
 }

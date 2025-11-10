@@ -24,7 +24,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await apiClient.post("/refresh-token", {
+        const response = await apiClient.post("/auth/refresh", {
           withCredentials: true,
         });
         signIn(response.data.token);

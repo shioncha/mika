@@ -23,6 +23,10 @@ function SettingsPage() {
         </ListElementSetting>
       </List>
       <List className={style.list}>
+        <ListElementSetting
+          to="sessions"
+          name="Active Sessions"
+        ></ListElementSetting>
         <button
           className={style.logout}
           onClick={() => {

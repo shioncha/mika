@@ -42,14 +42,12 @@ func SetupRouter(
 	/*
 	 * Public routes
 	 */
-	authRoutes := router.Group("/")
-	authRoutes.Use(rm.IPBasedRateLimit())
+	authRoutes := router.Group("/auth")
 	{
-		authRoutes.POST("/sign-up", ah.SignUp)
-		authRoutes.POST("/sign-in", ah.SignIn)
-		authRoutes.POST("/refresh-token", ah.RefreshAccessToken)
+		authRoutes.POST("/sign-up", rm.IPBasedRateLimit(), ah.SignUp)
+		authRoutes.POST("/sign-in", rm.IPBasedRateLimit(), ah.SignIn)
+		authRoutes.POST("/refresh", ah.RefreshAccessToken)
 	}
-	router.POST("/sign-out", ah.SignOut)
 
 	/*
 	 * Private routes
@@ -57,9 +55,12 @@ func SetupRouter(
 	authorized := router.Group("/")
 	authorized.Use(am.AuthRequired())
 	{
-		userRoutes := authorized.Group("/users")
+		userRoutes := authorized.Group("/users/me")
 		{
-			userRoutes.GET("/me", uh.Get)
+			userRoutes.GET("", uh.Get)
+			userRoutes.PATCH("", uh.Update)
+			userRoutes.GET("/sessions", ah.GetAllSessions)
+			userRoutes.DELETE("/sessions", ah.RevokeAllSessions)
 		}
 
 		postRoutes := authorized.Group("/posts")
@@ -78,7 +79,7 @@ func SetupRouter(
 		}
 
 		{
-			authorized.PATCH("/account", uh.Update)
+			authorized.POST("/auth/sign-out", ah.SignOut)
 		}
 	}
 

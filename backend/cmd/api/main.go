@@ -15,6 +15,7 @@ import (
 	redis "github.com/shioncha/mika/backend/internal/repository/redis"
 	"github.com/shioncha/mika/backend/internal/router"
 	"github.com/shioncha/mika/backend/internal/service"
+	_ "github.com/shioncha/mika/backend/docs"
 )
 
 type App struct {
@@ -67,6 +68,11 @@ func newApp() (*App, error) {
 	}, nil
 }
 
+// @title					Mika Backend API
+// @version				1.0
+// @description		This is a backend API for Mika.
+// @license.name	MIT
+// @license.url		https://opensource.org/licenses/MIT
 func main() {
 	app, err := newApp()
 	if err != nil {

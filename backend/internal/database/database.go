@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -15,14 +16,27 @@ func SetupClient() *ent.Client {
 	dbname := os.Getenv("POSTGRES_DB")
 	password := os.Getenv("POSTGRES_PASSWORD")
 
-	connectionString := "host=" + host + " port=" + port + " user=" + username + " dbname=" + dbname + " password=" + password + " sslmode=disable"
+	sslmode := "require"
+	isDev := os.Getenv("ENVIRONMENT") == "dev"
+	if isDev {
+		sslmode = "disable"
+	}
+
+	connectionString := fmt.Sprintf(
+		"host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+		host, port, username, dbname, password, sslmode,
+	)
 
 	client, err := ent.Open("postgres", connectionString)
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
-	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
+
+	if isDev {
+		log.Println("Running in development mode, auto-migrating database schema...")
+		if err := client.Schema.Create(context.Background()); err != nil {
+			log.Fatalf("failed creating schema resources: %v", err)
+		}
 	}
 
 	return client

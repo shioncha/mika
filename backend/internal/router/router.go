@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/shioncha/mika/backend/internal/handler"
 	"github.com/shioncha/mika/backend/internal/middleware"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 )
 
 func SetupRouter(
@@ -38,6 +40,8 @@ func SetupRouter(
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	/*
 	 * Public routes

@@ -30,10 +30,11 @@ func NewAuthService(authRepo repository.AuthRepository, sessionRepo repository.S
 }
 
 type SignUpParams struct {
-	Email           string
-	Name            string
-	Password        string
-	PasswordConfirm string
+	Email    string
+	Name     string
+	Password string
+	Device   string
+	IP       string
 }
 
 type SignUpResult struct {
@@ -42,7 +43,7 @@ type SignUpResult struct {
 	RefreshToken string
 }
 
-func (s *AuthService) SignUp(c context.Context, params SignUpParams, deviceInfo string, ipAddress string) (*SignUpResult, error) {
+func (s *AuthService) SignUp(c context.Context, params SignUpParams) (*SignUpResult, error) {
 	// メールアドレスの正規化
 	email := auth.NormalizeEmail(params.Email)
 
@@ -79,7 +80,7 @@ func (s *AuthService) SignUp(c context.Context, params SignUpParams, deviceInfo 
 	}
 
 	// リフレッシュトークン生成
-	refreshToken, err := s.sessionRepo.CreateSession(c, user.ID, deviceInfo, ipAddress, 7*24*time.Hour)
+	refreshToken, err := s.sessionRepo.CreateSession(c, user.ID, params.Device, params.IP, 7*24*time.Hour)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create session: %w", err)
 	}
@@ -94,6 +95,8 @@ func (s *AuthService) SignUp(c context.Context, params SignUpParams, deviceInfo 
 type SignInParams struct {
 	Email    string
 	Password string
+	Device   string
+	IP       string
 }
 
 type SignInResult struct {
@@ -102,7 +105,7 @@ type SignInResult struct {
 	RefreshToken string
 }
 
-func (s *AuthService) SignIn(c context.Context, params SignInParams, deviceInfo string, ipAddress string) (*SignInResult, error) {
+func (s *AuthService) SignIn(c context.Context, params SignInParams) (*SignInResult, error) {
 	// メールアドレスの正規化
 	email := auth.NormalizeEmail(params.Email)
 
@@ -140,7 +143,7 @@ func (s *AuthService) SignIn(c context.Context, params SignInParams, deviceInfo 
 	}
 
 	// リフレッシュトークン生成
-	refreshToken, err := s.sessionRepo.CreateSession(c, user.ID, deviceInfo, ipAddress, 7*24*time.Hour)
+	refreshToken, err := s.sessionRepo.CreateSession(c, user.ID, params.Device, params.IP, 7*24*time.Hour)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create session: %w", err)
 	}

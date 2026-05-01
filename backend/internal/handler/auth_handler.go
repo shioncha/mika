@@ -9,6 +9,12 @@ import (
 	"github.com/shioncha/mika/backend/internal/service"
 )
 
+const (
+	CookieRefreshToken = "refresh_token"
+	CookiePath         = "/api"
+	RefreshTokenMaxAge = 7 * 24 * time.Hour
+)
+
 type AuthHandler struct {
 	authService *service.AuthService
 }
@@ -35,38 +41,72 @@ type AuthResponse struct {
 	Token string `json:"token"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+func setRefreshCookie(c *gin.Context, token string, maxAge int) {
+	c.SetCookie(CookieRefreshToken, token, maxAge, CookiePath, os.Getenv("DOMAIN"), false, true)
+}
+
+func respondWithError(c *gin.Context, status int, message string) {
+	c.JSON(status, ErrorResponse{
+		Error: message,
+	})
+}
+
+// @Summary			Sign Up
+// @Description	Create a new user
+// @Tags				Auth
+// @Accept			json
+// @Produce			json
+// @Param     	request body SignUpRequest true "User info"
+// @Success			200  {object} AuthResponse
+// @Failure			400  {object} ErrorResponse
+// @Failure			409  {object} ErrorResponse
+// @Failure			500  {object} ErrorResponse
+// @Router			/sign-up [post]
 func (h *AuthHandler) SignUp(c *gin.Context) {
 	var req SignUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		respondWithError(c, http.StatusBadRequest, "Invalid request")
+		respondWithError(c, http.StatusBadRequest, "Invalid request") // TODO: Add validation error
 		return
 	}
-
-	deviceInfo := c.GetHeader("User-Agent")
-	ipAddress := c.ClientIP()
 
 	res, err := h.authService.SignUp(c.Request.Context(), service.SignUpParams{
-		Email:           req.Email,
-		Name:            req.Name,
-		Password:        req.Password,
-		PasswordConfirm: req.PasswordConfirm,
-	}, deviceInfo, ipAddress)
-	if err != nil && err.Error() == "email already registered" {
-		respondWithError(c, http.StatusConflict, "Email already registered")
-		return
-	}
+		Email:    req.Email,
+		Name:     req.Name,
+		Password: req.Password,
+		Device:   c.GetHeader("User-Agent"),
+		IP:       c.ClientIP(),
+	})
 	if err != nil {
+		if err.Error() == "email already registered" {
+			respondWithError(c, http.StatusConflict, "Email already registered")
+			return
+		}
 		respondWithError(c, http.StatusInternalServerError, "Failed to create user")
 		return
 	}
 
-	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", "", false, true)
+	setRefreshCookie(c, res.RefreshToken, int(RefreshTokenMaxAge.Seconds()))
 
 	c.JSON(http.StatusOK, AuthResponse{
 		Token: res.Token,
 	})
 }
 
+// @Summary			Sign In
+// @Description	Sign in to the application
+// @Tags				Auth
+// @Accept			json
+// @Produce			json
+// @Param     	request body SignInRequest true "User info"
+// @Success			200  {object} AuthResponse
+// @Failure			400  {object} ErrorResponse
+// @Failure			401  {object} ErrorResponse
+// @Failure			500  {object} ErrorResponse
+// @Router			/sign-in [post]
 func (h *AuthHandler) SignIn(c *gin.Context) {
 	var req SignInRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -74,37 +114,43 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	deviceInfo := c.GetHeader("User-Agent")
-	ipAddress := c.ClientIP()
-
-	res, err := h.authService.SignIn(c, service.SignInParams{
+	res, err := h.authService.SignIn(c.Request.Context(), service.SignInParams{
 		Email:    req.Email,
 		Password: req.Password,
-	}, deviceInfo, ipAddress)
-	if err != nil && err.Error() == "invalid credentials" {
-		respondWithError(c, http.StatusUnauthorized, "Invalid email or password")
-		return
-	}
+		Device:   c.GetHeader("User-Agent"),
+		IP:       c.ClientIP(),
+	})
 	if err != nil {
+		if err.Error() == "invalid credentials" {
+			respondWithError(c, http.StatusUnauthorized, "Invalid email or password")
+			return
+		}
 		respondWithError(c, http.StatusInternalServerError, "Failed to sign in")
 		return
 	}
 
-	c.SetCookie("refresh_token", res.RefreshToken, int((7 * 24 * time.Hour).Seconds()), "/api", "", false, true)
+	setRefreshCookie(c, res.RefreshToken, int(RefreshTokenMaxAge.Seconds()))
 
 	c.JSON(http.StatusOK, AuthResponse{
 		Token: res.Token,
 	})
 }
 
+// @Summary			Refresh Access Token
+// @Description	Refresh the access token
+// @Tags				Auth
+// @Produce			json
+// @Success			200  {object} AuthResponse
+// @Failure			401  {object} ErrorResponse
+// @Router			/refresh-token [post]
 func (h *AuthHandler) RefreshAccessToken(c *gin.Context) {
-	oldRefreshToken, err := c.Cookie("refresh_token")
+	oldRefreshToken, err := c.Cookie(CookieRefreshToken)
 	if err != nil {
 		respondWithError(c, http.StatusUnauthorized, "Refresh token not found")
 		return
 	}
 
-	res, err := h.authService.RefreshAccessToken(c, oldRefreshToken)
+	res, err := h.authService.RefreshAccessToken(c.Request.Context(), oldRefreshToken)
 	if err != nil {
 		respondWithError(c, http.StatusUnauthorized, "Invalid session")
 		return
@@ -114,8 +160,16 @@ func (h *AuthHandler) RefreshAccessToken(c *gin.Context) {
 	})
 }
 
+// @Summary			Sign Out
+// @Description	Sign out the current user
+// @Tags				Auth
+// @Produce			json
+// @Success			204
+// @Failure			401  {object} ErrorResponse
+// @Failure			500  {object} ErrorResponse
+// @Router			/sign-out [post]
 func (h *AuthHandler) SignOut(c *gin.Context) {
-	refreshToken, err := c.Cookie("refresh_token")
+	refreshToken, err := c.Cookie(CookieRefreshToken)
 	if err != nil {
 		respondWithError(c, http.StatusUnauthorized, "Refresh token not found")
 		return
@@ -126,8 +180,8 @@ func (h *AuthHandler) SignOut(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("refresh_token", "", -1, "/api", os.Getenv("DOMAIN"), false, true)
-	c.JSON(http.StatusOK, gin.H{"message": "Signed out successfully"})
+	setRefreshCookie(c, "", -1)
+	c.Status(http.StatusNoContent)
 }
 
 func (h *AuthHandler) GetAllSessions(c *gin.Context) {
@@ -151,8 +205,4 @@ func (h *AuthHandler) RevokeAllSessions(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "All sessions revoked successfully"})
-}
-
-func respondWithError(c *gin.Context, status int, message string) {
-	c.JSON(status, gin.H{"error": message})
 }

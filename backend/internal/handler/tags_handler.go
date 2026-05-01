@@ -18,6 +18,13 @@ func NewTagHandler(tagService *service.TagService) *TagHandler {
 	}
 }
 
+// @Summary			Get User's Tags
+// @Description	Get all tags associated with the authenticated user
+// @Tags				Tags
+// @Produce			json
+// @Success			200  {array} string
+// @Failure			500  {object} ErrorResponse
+// @Router			/tags [get]
 func (h *TagHandler) GetTags(c *gin.Context) {
 	uid, _ := c.Get("user_id")
 	userID, ok := uid.(string)
@@ -35,6 +42,14 @@ func (h *TagHandler) GetTags(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// @Summary			Get Posts having the Tag
+// @Description	Get posts associated with a specific tag
+// @Tags				Tags
+// @Produce			json
+// @Success			200  {object} GetPostsResponse
+// @Failure			400  {object} ErrorResponse
+// @Failure			500  {object} ErrorResponse
+// @Router			/tags/:tag/posts [get]
 func (h *TagHandler) GetPostsByTag(c *gin.Context) {
 	uid, _ := c.Get("user_id")
 	userID, ok := uid.(string)

@@ -1,6 +1,12 @@
 :root {
-  font-family: Heletica Neue, Arial, Hiragino Kaku Gothic ProN, Hiragino Sans,
-    BIZ UDPGothic, Meiryo, sans-serif;
+  font-family:
+    Heletica Neue,
+    Arial,
+    Hiragino Kaku Gothic ProN,
+    Hiragino Sans,
+    BIZ UDPGothic,
+    Meiryo,
+    sans-serif;
   line-height: 1.5;
 }
 
@@ -15,6 +21,8 @@ a {
 }
 
 body {
+  background-color: var(--color-background-primary);
+  color: var(--color-text-primary);
   place-items: center;
 }
 

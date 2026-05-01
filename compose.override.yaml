@@ -11,5 +11,6 @@ services:
       target: dev
     environment:
       - GIN_MODE=debug
+      - ENVIRONMENT=dev
     volumes:
       - .:/workspaces/mika:cached
